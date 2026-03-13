@@ -25,7 +25,7 @@ const Attribution = ({ fundId }) => {
     const { top_gainers = [], top_losers = [] } = data?.breakdown || {};
 
     const MoversList = ({ title, items, type }) => (
-        <View style={[styles.moversCard, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+        <View style={[styles.moversCard, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
             <View style={styles.moversHeader}>
                 <Text style={{ fontSize: 16 }}>{type === 'gainers' ? '📈' : '📉'}</Text>
                 <Text style={[styles.moversTitle, { color: colors.textPrimary }]}>{title}</Text>
@@ -37,7 +37,7 @@ const Attribution = ({ fundId }) => {
                     const intensity = Math.min(Math.abs(item.contribution_pct ?? 0) * 2000, 100);
                     const barColor = type === 'gainers' ? colors.accentGreen : colors.accentRed;
                     return (
-                        <View key={index} style={[styles.moverItem, { borderBottomColor: colors.borderSecondary }]}>
+                        <View key={index} style={[styles.moverItem, { borderBottomColor: colors.borderSubtle }]}>
                             <Text style={[styles.rank, { color: colors.textMuted }]}>{index + 1}</Text>
                             <View style={styles.moverInfo}>
                                 <Text style={[styles.ticker, { color: colors.textPrimary }]} numberOfLines={1}>
@@ -68,7 +68,7 @@ const Attribution = ({ fundId }) => {
     return (
         <View style={styles.container}>
             <View style={styles.sectionHeader}>
-                <View style={[styles.headerBar, { backgroundColor: colors.gradientAiStart }]} />
+                <View style={[styles.headerBar, { backgroundColor: colors.accentCyan }]} />
                 <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Market Drivers</Text>
             </View>
             <MoversList title="Top Gainers" items={top_gainers} type="gainers" />

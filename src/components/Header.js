@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
@@ -42,20 +42,35 @@ const Header = ({ navigation }) => {
     }, []);
 
     const getStatusColor = () => {
-        if (marketStatus === 'OPEN') return colors.accentGreen;
-        if (marketStatus === 'PRE_MARKET' || marketStatus === 'POST_MARKET') return colors.textSecondary;
+        if (marketStatus === 'OPEN') return colors.accentNeonGreen;
+        if (marketStatus === 'PRE_MARKET') return colors.statusPre;
+        if (marketStatus === 'POST_MARKET') return colors.textSecondary;
         return colors.textMuted;
     };
 
+    const logoSource = theme === 'dark'
+        ? require('../../assets/logo.png')
+        : require('../../assets/logo_light.png');
+
     return (
-        <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.borderPrimary }]}>
+        <View style={[styles.header, { backgroundColor: colors.headerBg, borderBottomColor: colors.borderPrimary }]}>
             <View style={styles.left}>
+                <Image source={logoSource} style={styles.logoImage} resizeMode="contain" />
                 <Text style={[styles.logoText, { color: colors.primary }]}>MF-Forecast</Text>
             </View>
 
             <View style={styles.center}>
                 <View style={styles.statusBlock}>
-                    {marketStatus === 'OPEN' && <View style={[styles.liveDot, { backgroundColor: colors.accentGreen }]} />}
+                    {marketStatus === 'OPEN' && (
+                        <View style={[styles.liveDot, {
+                            backgroundColor: colors.accentNeonGreen,
+                            shadowColor: colors.accentNeonGreen,
+                            shadowOffset: { width: 0, height: 0 },
+                            shadowOpacity: 0.8,
+                            shadowRadius: 4,
+                            elevation: 4,
+                        }]} />
+                    )}
                     <Text style={[styles.statusText, { color: getStatusColor() }]}>
                         {marketStatus.replace('_', ' ')}
                     </Text>
@@ -83,9 +98,17 @@ const styles = StyleSheet.create({
     },
     left: {
         flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    logoImage: {
+        width: 28,
+        height: 28,
+        borderRadius: 6,
     },
     logoText: {
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: '800',
         letterSpacing: -0.5,
         textTransform: 'uppercase',

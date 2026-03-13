@@ -29,7 +29,7 @@ const HolidayCalendar = () => {
 
     if (loading) {
         return (
-            <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+            <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
                 <View style={styles.header}>
                     <Text style={{ fontSize: 16 }}>📅</Text>
                     <Text style={[styles.title, { color: colors.textPrimary }]}>Trading Holidays</Text>
@@ -40,14 +40,14 @@ const HolidayCalendar = () => {
     }
 
     return (
-        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
             <View style={styles.header}>
                 <Text style={{ fontSize: 16 }}>📅</Text>
                 <Text style={[styles.title, { color: colors.textPrimary }]}>Trading Holidays 2026</Text>
             </View>
 
             {nextHoliday && (
-                <View style={[styles.nextBanner, { backgroundColor: colors.primaryDim, borderColor: colors.primary + '30' }]}>
+                <View style={[styles.nextBanner, { backgroundColor: colors.primaryDim, borderColor: colors.borderGlow }]}>
                     <Text style={[styles.nextLabel, { color: colors.primary }]}>Next Holiday</Text>
                     <Text style={[styles.nextName, { color: colors.textPrimary }]}>{nextHoliday.name}</Text>
                     <Text style={[styles.nextDate, { color: colors.textMuted }]}>
@@ -67,7 +67,7 @@ const HolidayCalendar = () => {
                     const hDate = new Date(holiday.date);
                     const isPast = hDate < today;
                     return (
-                        <View key={index} style={[styles.holidayItem, { borderBottomColor: colors.borderSecondary, opacity: isPast ? 0.5 : 1 }]}>
+                        <View key={index} style={[styles.holidayItem, { borderBottomColor: colors.borderSubtle, opacity: isPast ? 0.5 : 1 }]}>
                             <View style={[styles.dateBox, { backgroundColor: colors.primaryDim }]}>
                                 <Text style={[styles.dateDay, { color: colors.primary }]}>{hDate.getDate()}</Text>
                                 <Text style={[styles.dateMonth, { color: colors.primary }]}>

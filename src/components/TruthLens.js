@@ -26,19 +26,19 @@ const TruthLens = ({ fundId }) => {
     const getMagnitudeColor = (magnitude) => {
         switch (magnitude) {
             case 'LOW': return colors.accentGreen;
-            case 'MEDIUM': return '#eab308';
+            case 'MEDIUM': return colors.statusPre;
             case 'HIGH': return colors.accentRed;
             default: return colors.textMuted;
         }
     };
 
     if (isLoading) {
-        return <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.cardBorder, height: 120 }]} />;
+        return <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.borderPrimary, height: 120 }]} />;
     }
 
     if (error || !data || !data.date) {
         return (
-            <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+            <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
                 <Text style={{ fontSize: 28, textAlign: 'center', marginBottom: 8 }}>🔍</Text>
                 <Text style={[styles.emptyText, { color: colors.textMuted }]}>Previous Day Prediction data not available yet</Text>
                 <Text style={[styles.emptyHint, { color: colors.textMuted }]}>Predictions are captured daily at market close</Text>
@@ -50,7 +50,7 @@ const TruthLens = ({ fundId }) => {
     const streak = data.streak || 0;
 
     return (
-        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
             <View style={styles.header}>
                 <View style={styles.headerTitle}>
                     <Text style={{ fontSize: 18 }}>🔍</Text>

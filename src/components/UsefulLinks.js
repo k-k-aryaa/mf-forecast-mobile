@@ -62,7 +62,7 @@ const UsefulLinks = () => {
         .filter(([name]) => name.toLowerCase().includes(search.toLowerCase()));
 
     const LinkItem = ({ name, url, desc }) => (
-        <TouchableOpacity style={[styles.linkItem, { borderBottomColor: colors.borderSecondary }]} onPress={() => openLink(url)}>
+        <TouchableOpacity style={[styles.linkItem, { borderBottomColor: colors.borderSubtle }]} onPress={() => openLink(url)}>
             <View style={styles.linkInfo}>
                 <Text style={[styles.linkName, { color: colors.textPrimary }]}>{name}</Text>
                 {desc && <Text style={[styles.linkDesc, { color: colors.textMuted }]}>{desc}</Text>}
@@ -74,7 +74,7 @@ const UsefulLinks = () => {
     const tabs = ['official', 'platforms', 'amc'];
 
     return (
-        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
             <View style={styles.header}>
                 <Text style={{ fontSize: 16 }}>🔗</Text>
                 <Text style={[styles.title, { color: colors.textPrimary }]}>Useful Links</Text>
@@ -100,7 +100,7 @@ const UsefulLinks = () => {
                 {activeTab === 'amc' && (
                     <>
                         <TextInput
-                            style={[styles.searchInput, { color: colors.textPrimary, borderColor: colors.borderPrimary, backgroundColor: colors.surface }]}
+                            style={[styles.searchInput, { color: colors.textPrimary, borderColor: colors.borderPrimary, backgroundColor: colors.bgSecondary }]}
                             placeholder="Search AMC..."
                             placeholderTextColor={colors.textMuted}
                             value={search}
@@ -110,7 +110,7 @@ const UsefulLinks = () => {
                             {filteredAMCs.map(([name, url]) => (
                                 <TouchableOpacity
                                     key={name}
-                                    style={[styles.amcItem, { borderBottomColor: colors.borderSecondary }]}
+                                    style={[styles.amcItem, { borderBottomColor: colors.borderSubtle }]}
                                     onPress={() => openLink(url)}
                                 >
                                     <Text style={[styles.amcName, { color: colors.textPrimary }]}>{name}</Text>

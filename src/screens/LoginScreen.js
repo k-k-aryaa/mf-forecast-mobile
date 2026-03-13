@@ -82,7 +82,7 @@ const LoginScreen = ({ navigation }) => {
         <KeyboardAvoidingView style={[styles.container, { backgroundColor: colors.background }]} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 {/* Home Button */}
-                <TouchableOpacity style={[styles.homeBtn, { backgroundColor: colors.card, borderColor: colors.cardBorder }]} onPress={() => navigation.goBack()}>
+                <TouchableOpacity style={[styles.homeBtn, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]} onPress={() => navigation.goBack()}>
                     <Ionicons name="home" size={16} color={colors.textSecondary} />
                     <Text style={[styles.homeBtnText, { color: colors.textSecondary }]}>Home</Text>
                 </TouchableOpacity>
@@ -95,11 +95,11 @@ const LoginScreen = ({ navigation }) => {
                         Get real-time NAV predictions and AI-powered insights.
                     </Text>
                     <View style={styles.statsRow}>
-                        <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+                        <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
                             <Text style={[styles.statValue, { color: colors.primary }]}>98%</Text>
                             <Text style={[styles.statLabel, { color: colors.textMuted }]}>Accuracy</Text>
                         </View>
-                        <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+                        <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
                             <Text style={[styles.statValue, { color: colors.accentGreen }]}>Live</Text>
                             <Text style={[styles.statLabel, { color: colors.textMuted }]}>Updates</Text>
                         </View>
@@ -107,7 +107,7 @@ const LoginScreen = ({ navigation }) => {
                 </View>
 
                 {/* Form Card */}
-                <View style={[styles.formCard, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+                <View style={[styles.formCard, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
                     <Text style={[styles.formTitle, { color: colors.primary }]}>{getTitle()}</Text>
                     <Text style={[styles.formSubtitle, { color: colors.textMuted }]}>{getSubtitle()}</Text>
 
@@ -126,7 +126,7 @@ const LoginScreen = ({ navigation }) => {
                     {/* Email */}
                     <View style={styles.inputGroup}>
                         <Text style={[styles.label, { color: colors.textSecondary }]}>Email</Text>
-                        <View style={[styles.inputWrapper, { borderColor: colors.borderPrimary, backgroundColor: colors.surface }]}>
+                        <View style={[styles.inputWrapper, { borderColor: colors.borderPrimary, backgroundColor: colors.bgSecondary }]}>
                             <Ionicons name="mail" size={16} color={colors.textMuted} />
                             <TextInput
                                 style={[styles.input, { color: colors.textPrimary }]}

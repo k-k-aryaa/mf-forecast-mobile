@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, Modal, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, FlatList, Modal, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQuery } from '@tanstack/react-query';
 import { Ionicons } from '@expo/vector-icons';
 import api from '../api';
@@ -31,7 +32,7 @@ const FundSelector = ({ selectedFundId, onSelect }) => {
     return (
         <View style={styles.wrapper}>
             <TouchableOpacity
-                style={[styles.selector, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}
+                style={[styles.selector, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}
                 onPress={() => setIsOpen(true)}
                 activeOpacity={0.7}
             >
@@ -63,7 +64,7 @@ const FundSelector = ({ selectedFundId, onSelect }) => {
                         </TouchableOpacity>
                     </View>
 
-                    <View style={[styles.searchBox, { backgroundColor: colors.surface, borderColor: colors.borderPrimary }]}>
+                    <View style={[styles.searchBox, { backgroundColor: colors.bgSecondary, borderColor: colors.borderPrimary }]}>
                         <Ionicons name="search" size={18} color={colors.textMuted} />
                         <TextInput
                             style={[styles.searchInput, { color: colors.textPrimary }]}
@@ -87,7 +88,7 @@ const FundSelector = ({ selectedFundId, onSelect }) => {
                                 <TouchableOpacity
                                     style={[
                                         styles.fundOption,
-                                        { borderBottomColor: colors.borderSecondary },
+                                        { borderBottomColor: colors.borderSubtle },
                                         item.id === selectedFundId && { backgroundColor: colors.primaryDim }
                                     ]}
                                     onPress={() => handleSelect(item)}

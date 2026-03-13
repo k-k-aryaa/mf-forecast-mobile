@@ -35,7 +35,7 @@ const MarketTicker = ({ onNavigateToIndices, onNavigateToDetail }) => {
         const isPositive = item.change >= 0;
         return (
             <TouchableOpacity
-                style={[styles.card, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}
+                style={[styles.card, { backgroundColor: colors.indexCardBg, borderColor: colors.borderSubtle }]}
                 onPress={() => onNavigateToDetail?.(item.symbol)}
                 activeOpacity={0.7}
             >
@@ -53,9 +53,16 @@ const MarketTicker = ({ onNavigateToIndices, onNavigateToDetail }) => {
     };
 
     return (
-        <View style={[styles.container, { borderBottomColor: colors.borderPrimary }]}>
+        <View style={[styles.container, { borderBottomColor: colors.borderPrimary, backgroundColor: colors.tickerBg }]}>
             <View style={styles.header}>
-                <View style={[styles.liveDot, { backgroundColor: colors.accentGreen }]} />
+                <View style={[styles.liveDot, {
+                    backgroundColor: colors.accentNeonGreen,
+                    shadowColor: colors.accentNeonGreen,
+                    shadowOffset: { width: 0, height: 0 },
+                    shadowOpacity: 0.8,
+                    shadowRadius: 4,
+                    elevation: 4,
+                }]} />
                 <Text style={[styles.label, { color: colors.textMuted }]}>Market Indices</Text>
             </View>
             <FlatList
@@ -67,7 +74,7 @@ const MarketTicker = ({ onNavigateToIndices, onNavigateToDetail }) => {
                 contentContainerStyle={styles.listContent}
                 ListFooterComponent={hasMore ? (
                     <TouchableOpacity
-                        style={[styles.moreBtn, { backgroundColor: colors.primaryDim, borderColor: colors.primary }]}
+                        style={[styles.moreBtn, { backgroundColor: colors.primaryDim, borderColor: colors.borderGlow }]}
                         onPress={onNavigateToIndices}
                     >
                         <Text style={[styles.moreCount, { color: colors.primary }]}>+{indices.length - VISIBLE_COUNT}</Text>

@@ -16,7 +16,7 @@ const LearnSection = () => {
     const [expandedId, setExpandedId] = useState(null);
 
     return (
-        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
             <View style={styles.header}>
                 <Text style={{ fontSize: 16 }}>📖</Text>
                 <Text style={[styles.title, { color: colors.textPrimary }]}>Learn</Text>
@@ -25,7 +25,7 @@ const LearnSection = () => {
             {LEARN_ITEMS.map(item => (
                 <View key={item.id}>
                     <TouchableOpacity
-                        style={[styles.itemHeader, { borderBottomColor: colors.borderSecondary }]}
+                        style={[styles.itemHeader, { borderBottomColor: colors.borderSubtle }]}
                         onPress={() => setExpandedId(expandedId === item.id ? null : item.id)}
                     >
                         <Text style={{ fontSize: 14 }}>{item.icon}</Text>
@@ -35,7 +35,7 @@ const LearnSection = () => {
                         </Text>
                     </TouchableOpacity>
                     {expandedId === item.id && (
-                        <View style={[styles.itemContent, { backgroundColor: colors.surface }]}>
+                        <View style={[styles.itemContent, { backgroundColor: colors.bgSecondary }]}>
                             <Text style={[styles.contentText, { color: colors.textSecondary }]}>
                                 {item.content}
                             </Text>

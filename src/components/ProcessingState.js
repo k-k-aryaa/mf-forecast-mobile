@@ -44,15 +44,15 @@ const ProcessingState = () => {
     });
 
     return (
-        <View style={[styles.container, { backgroundColor: colors.card, borderColor: colors.primary + '30' }]}>
+        <View style={[styles.container, { backgroundColor: colors.card, borderColor: colors.borderGlow }]}>
             <View style={styles.animContainer}>
-                <Animated.View style={[styles.nodeRing, { borderColor: colors.primary, opacity: pulseAnim, transform: [{ rotate: spin }] }]} />
-                <View style={[styles.nodeCore, { backgroundColor: colors.primary }]} />
+                <Animated.View style={[styles.nodeRing, { borderColor: colors.accentCyan, opacity: pulseAnim, transform: [{ rotate: spin }] }]} />
+                <View style={[styles.nodeCore, { backgroundColor: colors.accentPurple }]} />
             </View>
-            <Text style={[styles.message, { color: colors.primary }]}>{LOADING_MESSAGES[messageIndex]}</Text>
+            <Text style={[styles.message, { color: colors.accentCyan }]}>{LOADING_MESSAGES[messageIndex]}</Text>
             <View style={styles.dots}>
                 {[0, 1, 2].map(i => (
-                    <View key={i} style={[styles.dot, { backgroundColor: colors.primary }]} />
+                    <View key={i} style={[styles.dot, { backgroundColor: colors.accentCyan }]} />
                 ))}
             </View>
         </View>

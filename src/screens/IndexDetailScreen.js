@@ -47,12 +47,19 @@ const IndexDetailScreen = ({ route, navigation }) => {
         <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
             <View style={styles.content}>
                 {/* Header Card */}
-                <View style={[styles.headerCard, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+                <View style={[styles.headerCard, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
                     <View style={styles.headerTop}>
                         <View>
                             <View style={styles.labelRow}>
                                 <Text style={[styles.indexLabel, { color: colors.textMuted }]}>INDEX</Text>
-                                <View style={[styles.liveDot, { backgroundColor: colors.accentGreen }]} />
+                                <View style={[styles.liveDot, {
+                                    backgroundColor: colors.accentNeonGreen,
+                                    shadowColor: colors.accentNeonGreen,
+                                    shadowOffset: { width: 0, height: 0 },
+                                    shadowOpacity: 0.8,
+                                    shadowRadius: 4,
+                                    elevation: 4,
+                                }]} />
                             </View>
                             <Text style={[styles.indexName, { color: colors.textPrimary }]}>
                                 {indexInfo?.name || decodeURIComponent(symbol)}
@@ -104,7 +111,7 @@ const IndexDetailScreen = ({ route, navigation }) => {
                 </View>
 
                 {/* Chart Card */}
-                <View style={[styles.chartCard, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+                <View style={[styles.chartCard, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
                     {isLoading ? (
                         <View style={styles.loadingChart}>
                             <ActivityIndicator color={colors.primary} size="large" />
@@ -138,7 +145,7 @@ const IndexDetailScreen = ({ route, navigation }) => {
                                 fillShadowGradientTo: chartColor,
                                 fillShadowGradientToOpacity: 0,
                                 strokeWidth: 2.5,
-                                propsForBackgroundLines: { stroke: colors.borderSecondary },
+                                propsForBackgroundLines: { stroke: colors.borderSubtle },
                                 labelColor: () => colors.textMuted,
                                 decimalPlaces: 0,
                             }}

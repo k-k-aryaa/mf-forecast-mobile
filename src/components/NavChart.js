@@ -21,7 +21,7 @@ const NavChart = ({ fundId }) => {
 
     if (isLoading) {
         return (
-            <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+            <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
                 <View style={[styles.skeleton, { backgroundColor: colors.primaryDim }]} />
             </View>
         );
@@ -29,7 +29,7 @@ const NavChart = ({ fundId }) => {
 
     if (error || !data?.nav_history?.length) {
         return (
-            <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+            <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
                 <Text style={{ color: colors.textMuted, textAlign: 'center', padding: 40 }}>
                     {error ? '⚠️ Unavailable' : '📊 No Data'}
                 </Text>
@@ -54,7 +54,7 @@ const NavChart = ({ fundId }) => {
     const chartColor = isPositive ? colors.accentGreen : colors.accentRed;
 
     return (
-        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
             <View style={styles.header}>
                 <View style={styles.headerLeft}>
                     <View style={[styles.indicator, { backgroundColor: colors.primary }]} />

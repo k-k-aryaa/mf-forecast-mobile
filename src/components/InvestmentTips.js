@@ -24,13 +24,13 @@ const InvestmentTips = () => {
     }, []);
 
     return (
-        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
             <View style={styles.header}>
                 <Text style={{ fontSize: 16 }}>⏰</Text>
                 <Text style={[styles.title, { color: colors.textPrimary }]}>Want Same Day NAV?</Text>
             </View>
 
-            <View style={[styles.tipItem, { borderBottomColor: colors.borderSecondary }]}>
+            <View style={[styles.tipItem, { borderBottomColor: colors.borderSubtle }]}>
                 <View style={styles.tipRow}>
                     <Text style={[styles.tipTime, { color: colors.textPrimary }]}>Before 2:00 PM</Text>
                     {timeLeft?.groww && <Text style={[styles.timeLeft, { color: colors.accentGreen }]}>{timeLeft.groww} left</Text>}

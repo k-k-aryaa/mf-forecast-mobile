@@ -15,7 +15,7 @@ const AboutScreen = ({ navigation }) => {
 
     return (
         <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={styles.content}>
-            <View style={[styles.heroCard, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+            <View style={[styles.heroCard, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
                 <Text style={[styles.heroTitle, { color: colors.primary }]}>
                     AI-Powered Real-Time Mutual Fund Navigator
                 </Text>
@@ -43,7 +43,7 @@ const AboutScreen = ({ navigation }) => {
                 <View style={[styles.devSection, { borderTopColor: colors.borderPrimary }]}>
                     <Text style={[styles.devTitle, { color: colors.textPrimary }]}>Meet the Developer</Text>
                     <TouchableOpacity
-                        style={[styles.devLink, { backgroundColor: colors.primaryDim, borderColor: colors.primary + '40' }]}
+                        style={[styles.devLink, { backgroundColor: colors.primaryDim, borderColor: colors.borderGlow }]}
                         onPress={() => Linking.openURL('https://k-k-aryaa.github.io/')}
                     >
                         <Ionicons name="open-outline" size={16} color={colors.primary} />

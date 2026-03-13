@@ -34,7 +34,14 @@ const AllIndicesScreen = ({ navigation }) => {
                     <Text style={[styles.backText, { color: colors.textSecondary }]}>Dashboard</Text>
                 </TouchableOpacity>
                 <View style={styles.titleRow}>
-                    <View style={[styles.liveDot, { backgroundColor: colors.accentGreen }]} />
+                    <View style={[styles.liveDot, {
+                        backgroundColor: colors.accentNeonGreen,
+                        shadowColor: colors.accentNeonGreen,
+                        shadowOffset: { width: 0, height: 0 },
+                        shadowOpacity: 0.8,
+                        shadowRadius: 4,
+                        elevation: 4,
+                    }]} />
                     <Text style={[styles.title, { color: colors.textPrimary }]}>All Market Indices</Text>
                 </View>
                 <Text style={[styles.subtitle, { color: colors.textMuted }]}>
@@ -57,7 +64,7 @@ const AllIndicesScreen = ({ navigation }) => {
                         const isPositive = item.change >= 0;
                         return (
                             <TouchableOpacity
-                                style={[styles.card, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}
+                                style={[styles.card, { backgroundColor: colors.indexCardBg, borderColor: colors.borderSubtle }]}
                                 onPress={() => navigation.navigate('IndexDetail', { symbol: item.symbol })}
                             >
                                 <Text style={[styles.indexName, { color: colors.textSecondary }]} numberOfLines={1}>

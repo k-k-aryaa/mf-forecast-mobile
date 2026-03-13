@@ -72,7 +72,7 @@ const EstimateCard = ({ fundId }) => {
 
     if (error) {
         return (
-            <View style={[styles.card, { backgroundColor: colors.accentRedDim, borderColor: colors.accentRed + '50' }]}>
+            <View style={[styles.card, { backgroundColor: colors.accentRedDim, borderColor: colors.accentRed }]}>
                 <Text style={{ fontSize: 24, textAlign: 'center' }}>⚠️</Text>
                 <Text style={[styles.errorText, { color: colors.accentRed }]}>Signal Lost</Text>
             </View>
@@ -84,7 +84,7 @@ const EstimateCard = ({ fundId }) => {
     const isPositive = data.estimated_return_pct >= 0;
 
     return (
-        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
             <View style={styles.topRow}>
                 <View style={styles.badgeRow}>
                     {user && (
@@ -96,11 +96,18 @@ const EstimateCard = ({ fundId }) => {
                             />
                         </TouchableOpacity>
                     )}
-                    <Text style={[styles.badgeLabel, { color: colors.textMuted }]}>LIVE FORECAST</Text>
-                    <View style={[styles.liveDot, { backgroundColor: colors.accentGreen }]} />
+                    <Text style={[styles.badgeLabel, { color: colors.accentNeonGreen }]}>LIVE FORECAST</Text>
+                    <View style={[styles.liveDot, {
+                        backgroundColor: colors.accentNeonGreen,
+                        shadowColor: colors.accentNeonGreen,
+                        shadowOffset: { width: 0, height: 0 },
+                        shadowOpacity: 0.8,
+                        shadowRadius: 4,
+                        elevation: 4,
+                    }]} />
                 </View>
                 <TouchableOpacity
-                    style={[styles.refreshBtn, { backgroundColor: colors.primaryDim, borderColor: colors.primary + '40' }]}
+                    style={[styles.refreshBtn, { backgroundColor: colors.primaryDim, borderColor: colors.borderGlow }]}
                     onPress={handleRefresh}
                     disabled={isFetching}
                 >
@@ -121,11 +128,11 @@ const EstimateCard = ({ fundId }) => {
             </View>
 
             <View style={styles.navGrid}>
-                <View style={[styles.navBox, { backgroundColor: colors.primaryDim, borderColor: colors.primary + '30' }]}>
+                <View style={[styles.navBox, { backgroundColor: colors.primaryDim, borderColor: colors.borderGlow }]}>
                     <Text style={[styles.navLabel, { color: colors.textMuted }]}>Predicted NAV</Text>
                     <Text style={[styles.navValue, { color: colors.textPrimary }]}>₹{data.estimated_nav?.toFixed(2) ?? '-'}</Text>
                 </View>
-                <View style={[styles.navBox, { backgroundColor: colors.surface, borderColor: colors.borderPrimary }]}>
+                <View style={[styles.navBox, { backgroundColor: colors.surfaceHoverOverlay, borderColor: colors.borderPrimary }]}>
                     <Text style={[styles.navLabel, { color: colors.textMuted }]}>Previous</Text>
                     <Text style={[styles.navValue, { color: colors.textSecondary }]}>₹{data.previous_nav?.toFixed(2) ?? '-'}</Text>
                 </View>

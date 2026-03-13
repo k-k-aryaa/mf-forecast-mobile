@@ -26,7 +26,7 @@ const Favorites = ({ onFundSelect, onLogin }) => {
         return (
             <View style={styles.container}>
                 <Text style={[styles.title, { color: colors.textPrimary }]}>Watchlist</Text>
-                <View style={[styles.loginGate, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+                <View style={[styles.loginGate, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
                     <View style={[styles.lockIcon, { backgroundColor: colors.primaryDim }]}>
                         <Ionicons name="lock-closed" size={28} color={colors.primary} />
                     </View>
@@ -63,14 +63,14 @@ const Favorites = ({ onFundSelect, onLogin }) => {
             </View>
 
             {!favorites?.length ? (
-                <View style={[styles.emptyState, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+                <View style={[styles.emptyState, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
                     <Ionicons name="heart-dislike-outline" size={32} color={colors.textMuted} />
                     <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>No Favorites Yet</Text>
                     <Text style={[styles.emptyDesc, { color: colors.textMuted }]}>
                         Start adding mutual funds to your watchlist.
                     </Text>
                     <TouchableOpacity
-                        style={[styles.browseBtn, { backgroundColor: colors.primaryDim, borderColor: colors.primary + '40' }]}
+                        style={[styles.browseBtn, { backgroundColor: colors.primaryDim, borderColor: colors.borderGlow }]}
                         onPress={() => onFundSelect(null)}
                     >
                         <Text style={[styles.browseBtnText, { color: colors.primary }]}>Browse Funds</Text>
@@ -84,7 +84,7 @@ const Favorites = ({ onFundSelect, onLogin }) => {
                     renderItem={({ item }) => {
                         const isPositive = (item.day_change_pct || 0) >= 0;
                         return (
-                            <View style={[styles.favCard, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+                            <View style={[styles.favCard, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
                                 <TouchableOpacity style={styles.favInfo} onPress={() => onFundSelect(item.id)}>
                                     <Text style={[styles.favName, { color: colors.textPrimary }]} numberOfLines={2}>
                                         {item.scheme_name}
