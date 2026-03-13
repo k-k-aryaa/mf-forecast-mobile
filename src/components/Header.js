@@ -137,8 +137,8 @@ const styles = StyleSheet.create({
   header: {
     borderBottomWidth: 1,
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    paddingTop: 4,
+    paddingVertical: spacing.lg,
+    paddingTop: 12,
   },
   headerContent: {
     flexDirection: 'row',
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     borderRadius: radii.sm,
   },
   brandText: {
-    fontSize: fontSizes.lg,
+    fontSize: fontSizes['2xl'],
     fontWeight: '800',
     letterSpacing: -0.5,
     textTransform: 'uppercase',

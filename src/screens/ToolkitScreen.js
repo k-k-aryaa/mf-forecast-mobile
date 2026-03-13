@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Linking from 'expo-linking';
 import { useQuery } from '@tanstack/react-query';
@@ -109,23 +109,57 @@ function HolidayCalendar() {
 }
 
 // ========= USEFUL LINKS =========
+const AMC_LINKS = {
+  '360 ONE Mutual Fund': 'https://www.360.one/asset-management/mutualfund/downloads/factsheets',
+  'Aditya Birla Sun Life Mutual Fund': 'https://mutualfund.adityabirlacapital.com/forms-and-downloads/factsheets',
+  'Axis Mutual Fund': 'https://www.axismf.com/downloads',
+  'Bajaj Finserv Mutual Fund': 'https://www.bajajamc.com/downloads?statutory-disclosures=',
+  'Bandhan Mutual Fund': 'https://bandhanmutual.com/downloads/factsheets',
+  'Baroda BNP Paribas Mutual Fund': 'https://www.barodabnpparibasmf.in/downloads/monthly-factsheet',
+  'Canara Robeco Mutual Fund': 'https://www.canararobeco.com/documents/forms-downloads/forms-information-documents/information-documents/factsheets/',
+  'DSP Mutual Fund': 'https://www.dspim.com/downloads?category=Information%20Documents&sub_category=Factsheets',
+  'Edelweiss Mutual Fund': 'https://www.edelweissmf.com/downloads/factsheets',
+  'Franklin Templeton Mutual Fund': 'https://www.franklintempletonindia.com/downloads/fund-literature',
+  'Groww Mutual Fund': 'https://www.growwmf.in/downloads/fact-sheet',
+  'HDFC Mutual Fund': 'http://hdfcfund.com/downloads/monthly-fact-sheet',
+  'HSBC Mutual Fund': 'https://www.assetmanagement.hsbc.co.in/en/mutual-funds/investor-resources',
+  'ICICI Prudential Mutual Fund': 'https://www.icicipruamc.com/news-and-media/downloads?currentTabFilter=Historical Factsheets',
+  'Invesco Mutual Fund': 'https://invescomutualfund.com/literature-and-form?tab=Factsheets',
+  'Kotak Mahindra Mutual Fund': 'https://www.kotakmf.com/Information/forms-and-downloads/Information',
+  'Mirae Asset Mutual Fund': 'https://www.miraeassetmf.co.in/downloads/factsheet',
+  'Motilal Oswal Mutual Fund': 'http://www.mostshares.com/downloads/mutualfund/Factsheet',
+  'Nippon India Mutual Fund': 'https://mf.nipponindiaim.com/investor-service/downloads/factsheet-portfolio-and-other-disclosures',
+  'PPFAS Mutual Fund': 'http://amc.ppfas.com/schemes/factsheet/index.php',
+  'SBI Mutual Fund': 'https://www.sbimf.com/en-us/factsheets',
+  'Sundaram Mutual Fund': 'https://www.sundarammutual.com/Fundwise-Factsheet',
+  'Tata Mutual Fund': 'https://www.tatamutualfund.com/information-documents',
+  'UTI Mutual Fund': 'https://www.utimf.com/downloads/fact-sheet',
+  'WhiteOak Capital Mutual Fund': 'https://mf.whiteoakamc.com/download#Factsheet',
+};
+
 function UsefulLinks() {
   const colors = useColors();
   const [activeTab, setActiveTab] = useState('official');
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const tabs = {
-    official: [
-      { name: 'MFCentral', url: 'https://www.mfcentral.com' },
-      { name: 'AMFI', url: 'https://www.amfiindia.com' },
-      { name: 'SEBI', url: 'https://www.sebi.gov.in' },
-    ],
-    platforms: [
-      { name: 'Groww', url: 'https://groww.in' },
-      { name: 'Zerodha Coin', url: 'https://coin.zerodha.com' },
-      { name: 'Kuvera', url: 'https://kuvera.in' },
-      { name: 'Paytm Money', url: 'https://www.paytmmoney.com' },
-    ],
-  };
+  const officialLinks = [
+    { name: 'MFCentral', url: 'https://www.mfcentral.com', desc: 'Consolidated MF portfolio view' },
+    { name: 'AMFI India', url: 'https://www.amfiindia.com', desc: 'Official NAV data & scheme info' },
+    { name: 'SEBI', url: 'https://www.sebi.gov.in', desc: 'MF regulations & circulars' },
+  ];
+
+  const platformLinks = [
+    { name: 'Groww', url: 'https://groww.in', desc: 'Popular investment platform' },
+    { name: 'Zerodha Coin', url: 'https://coin.zerodha.com', desc: 'Direct MF investing' },
+    { name: 'Kuvera', url: 'https://kuvera.in', desc: 'Free direct MF platform' },
+    { name: 'Paytm Money', url: 'https://www.paytmmoney.com', desc: 'Commission-free investing' },
+  ];
+
+  const filteredAMCs = Object.entries(AMC_LINKS)
+    .filter(([name]) => name.toLowerCase().includes(searchTerm.toLowerCase()))
+    .sort((a, b) => a[0].localeCompare(b[0]));
+
+  const tabLabels = { official: 'Official', platforms: 'Platforms', amc: 'AMC Portals' };
 
   return (
     <View style={[styles.card, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}>
@@ -134,22 +168,59 @@ function UsefulLinks() {
         <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>Useful Links</Text>
       </View>
       <View style={[styles.tabBar, { backgroundColor: colors.surfaceHover }]}>
-        {['official', 'platforms'].map(t => (
+        {['official', 'platforms', 'amc'].map(t => (
           <TouchableOpacity key={t} onPress={() => setActiveTab(t)}
             style={[styles.tabBtn, activeTab === t && { backgroundColor: `${colors.accentCyan}33` }]}>
             <Text style={[styles.tabBtnText, { color: activeTab === t ? colors.accentCyan : colors.textMuted }]}>
-              {t === 'official' ? 'Official' : 'Platforms'}
+              {tabLabels[t]}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
-      {tabs[activeTab]?.map((link, i) => (
+      {activeTab === 'official' && officialLinks.map((link, i) => (
         <TouchableOpacity key={i} onPress={() => Linking.openURL(link.url)}
           style={[styles.linkItem, { borderBottomColor: colors.borderSubtle }]}>
-          <Text style={[styles.linkName, { color: colors.textPrimary }]}>{link.name}</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.linkName, { color: colors.textPrimary }]}>{link.name}</Text>
+            <Text style={[styles.linkDesc, { color: colors.textMuted }]}>{link.desc}</Text>
+          </View>
           <ExternalLink size={14} color={colors.textMuted} />
         </TouchableOpacity>
       ))}
+      {activeTab === 'platforms' && platformLinks.map((link, i) => (
+        <TouchableOpacity key={i} onPress={() => Linking.openURL(link.url)}
+          style={[styles.linkItem, { borderBottomColor: colors.borderSubtle }]}>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.linkName, { color: colors.textPrimary }]}>{link.name}</Text>
+            <Text style={[styles.linkDesc, { color: colors.textMuted }]}>{link.desc}</Text>
+          </View>
+          <ExternalLink size={14} color={colors.textMuted} />
+        </TouchableOpacity>
+      ))}
+      {activeTab === 'amc' && (
+        <>
+          <TextInput
+            placeholder="Search AMC..."
+            placeholderTextColor={colors.textMuted}
+            value={searchTerm}
+            onChangeText={setSearchTerm}
+            style={[styles.amcSearchInput, {
+              backgroundColor: colors.surfaceHover,
+              color: colors.textPrimary,
+              borderColor: colors.borderSubtle,
+            }]}
+          />
+          {filteredAMCs.map(([name, url], i) => (
+            <TouchableOpacity key={i} onPress={() => Linking.openURL(url)}
+              style={[styles.linkItem, { borderBottomColor: colors.borderSubtle }]}>
+              <Text style={[styles.linkName, { color: colors.textPrimary, flex: 1 }]}>
+                {name.replace(' Mutual Fund', '')}
+              </Text>
+              <ExternalLink size={14} color={colors.textMuted} />
+            </TouchableOpacity>
+          ))}
+        </>
+      )}
     </View>
   );
 }
@@ -160,12 +231,30 @@ function LearnSection() {
   const [expanded, setExpanded] = useState(null);
 
   const items = [
-    { title: 'What is NAV?', content: 'NAV (Net Asset Value) is the per-unit value of a mutual fund, calculated daily after market close.' },
-    { title: 'SIP vs Lumpsum', content: 'SIP allows regular fixed investments, averaging out cost over time. Lumpsum is a one-time investment.' },
-    { title: 'How Predictions Work', content: 'Our AI analyzes real-time stock prices of fund holdings to estimate NAV before official publication.' },
-    { title: 'Exit Load Rules', content: 'Most equity funds charge 1% exit load if redeemed within 1 year. Liquid funds may have graded exit loads.' },
-    { title: 'Tax Rules', content: 'Equity funds: STCG 15% (< 1yr), LTCG 10% (> 1yr, above ₹1L). Debt funds taxed at slab rate.' },
-    { title: 'NAV Cutoff Times', content: 'For same-day NAV: invest before 3 PM for equity/debt, before 2 PM on some platforms.' },
+    {
+      title: 'What is NAV?',
+      content: 'NAV (Net Asset Value) is the per-unit market value of a mutual fund scheme. It represents the price at which you buy or sell units.\n\nFormula: NAV = (Total Assets - Total Liabilities) / Number of Units Outstanding\n\nNAV is calculated at the end of each trading day after market close, typically published by 9:00 PM IST.',
+    },
+    {
+      title: 'SIP vs Lumpsum',
+      content: 'SIP (Systematic Investment Plan)\n• Invest fixed amount regularly (monthly/weekly)\n• Benefits from rupee cost averaging\n• Lower risk due to time diversification\n• Best for salaried individuals\n\nLumpsum\n• One-time investment of a larger amount\n• Can be beneficial if market is low\n• Higher risk if market timing is wrong\n• Best when you have surplus funds',
+    },
+    {
+      title: 'How Our Predictions Work',
+      content: 'We utilize advanced AI models trained on vast amounts of historical market data to predict daily NAV fluctuations.\n\nAI-Driven Analysis: Our system processes real-time stock movements and portfolio compositions to generate highly accurate estimates.\n\nSmart Forecasting: Our proprietary AI engine continuously synthesizes complex market signals to forecast outcomes with precision, delivering insights ahead of official reporting.',
+    },
+    {
+      title: 'Exit Load Rules',
+      content: 'Exit load is a fee charged when you redeem (sell) your mutual fund units before a specified period.\n\nCommon Exit Load Periods:\n• Equity Funds: 1% if redeemed within 1 year\n• Debt Funds: 0.5-1% if redeemed within 3-6 months\n• ELSS: Lock-in of 3 years (no exit load after)\n• Liquid Funds: Usually nil or graded\n\nTip: Always check the scheme\'s SID for exact exit load terms.',
+    },
+    {
+      title: 'Tax Rules (Equity Funds)',
+      content: 'Short-Term Capital Gains (STCG)\n• Holding period: Less than 1 year\n• Tax rate: 15% on gains\n\nLong-Term Capital Gains (LTCG)\n• Holding period: 1 year or more\n• Tax rate: 10% on gains above ₹1 lakh/year\n• Gains up to ₹1 lakh are tax-free\n\nDividend Taxation\n• Dividends are added to your income and taxed at your slab rate\n• TDS of 10% if dividend exceeds ₹5,000/year',
+    },
+    {
+      title: 'NAV Cutoff Times',
+      content: 'The cutoff time determines which day\'s NAV applies to your investment:\n\nEquity & Hybrid Funds\n• Before 3:00 PM: Same day NAV\n• After 3:00 PM: Next business day NAV\n\nLiquid & Overnight Funds\n• Before 1:30 PM: Same day NAV\n• After 1:30 PM: Next business day NAV\n\nTip: Broker platforms may have earlier cutoffs (e.g., 2:00 PM) for processing.',
+    },
   ];
 
   return (
@@ -238,9 +327,18 @@ const styles = StyleSheet.create({
   // Links
   tabBar: { flexDirection: 'row', borderRadius: radii.md, padding: 3, marginBottom: spacing.md },
   tabBtn: { flex: 1, alignItems: 'center', paddingVertical: spacing.sm, borderRadius: radii.sm },
-  tabBtnText: { fontSize: fontSizes.sm, fontWeight: '600' },
+  tabBtnText: { fontSize: fontSizes.xs, fontWeight: '600' },
   linkItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: spacing.md, borderBottomWidth: 1 },
   linkName: { fontSize: fontSizes.base, fontWeight: '500' },
+  linkDesc: { fontSize: fontSizes.xs, marginTop: 2 },
+  amcSearchInput: {
+    borderWidth: 1,
+    borderRadius: radii.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    fontSize: fontSizes.sm,
+    marginBottom: spacing.md,
+  },
   // Learn
   learnItem: { paddingVertical: spacing.md, borderBottomWidth: 1 },
   learnHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },

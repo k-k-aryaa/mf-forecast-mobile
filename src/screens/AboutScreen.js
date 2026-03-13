@@ -64,12 +64,6 @@ export default function AboutScreen() {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Main')}
-            style={[styles.ctaBtn, { backgroundColor: colors.accentCyan }]}
-          >
-            <Text style={styles.ctaText}>Explore Dashboard</Text>
-          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
