@@ -4,7 +4,7 @@
  */
 
 // API Configuration - use your machine's LAN IP for mobile testing
-export const API_BASE_URL = 'http://192.168.1.6:8585';
+export const API_BASE_URL = 'http://192.168.1.20:8585';
 
 // App Configuration
 export const APP_NAME = 'MF Forecast';
