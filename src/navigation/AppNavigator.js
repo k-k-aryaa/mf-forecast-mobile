@@ -11,6 +11,7 @@ import AboutScreen from '../screens/AboutScreen';
 import ToolkitScreen from '../screens/ToolkitScreen';
 import AllIndicesScreen from '../screens/AllIndicesScreen';
 import IndexDetailScreen from '../screens/IndexDetailScreen';
+import DisclaimerScreen from '../screens/DisclaimerScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -79,6 +80,7 @@ export default function AppNavigator() {
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen name="AllIndices" component={AllIndicesScreen} />
         <Stack.Screen name="IndexDetail" component={IndexDetailScreen} />
+        <Stack.Screen name="Disclaimer" component={DisclaimerScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
