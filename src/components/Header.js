@@ -1,151 +1,223 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../context/ThemeContext';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Sun, Moon, LogOut, User } from 'lucide-react-native';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
+import { useColors, spacing, radii, fontSizes } from '../theme';
+import { NAV_CUTOFF_HOUR, NAV_CUTOFF_MINUTE, MARKET_STATUS_REFRESH_INTERVAL } from '../api/config';
+import api from '../api/api';
 
-const Header = ({ navigation }) => {
-    const { theme, toggleTheme, colors } = useTheme();
-    const { user, logout } = useAuth();
+function getSecondsUntilCutoff() {
+  const now = new Date();
+  const cutoff = new Date();
+  cutoff.setHours(NAV_CUTOFF_HOUR, NAV_CUTOFF_MINUTE, 0, 0);
+  const diff = Math.floor((cutoff - now) / 1000);
+  return Math.max(0, diff);
+}
 
-    const [countdown, setCountdown] = React.useState('');
-    const [marketStatus, setMarketStatus] = React.useState('CLOSED');
+function formatCountdown(seconds) {
+  if (seconds <= 0) return 'Closed';
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  return `${h}h ${m}m ${s}s`;
+}
 
-    React.useEffect(() => {
-        const updateTimer = () => {
-            const now = new Date();
-            const cutoff = new Date();
-            cutoff.setHours(15, 0, 0, 0);
-            const diff = Math.floor((cutoff - now) / 1000);
+export default function Header() {
+  const [countdown, setCountdown] = useState(formatCountdown(getSecondsUntilCutoff()));
+  const [marketStatus, setMarketStatus] = useState('CLOSED');
+  const [isTradingDay, setIsTradingDay] = useState(true);
+  const { user, logout } = useAuth();
+  const { theme, toggleTheme, isDark } = useTheme();
+  const colors = useColors();
+  const navigation = useNavigation();
 
-            if (diff <= 0) {
-                setCountdown('Closed');
-            } else {
-                const h = Math.floor(diff / 3600);
-                const m = Math.floor((diff % 3600) / 60);
-                const s = diff % 60;
-                setCountdown(`${h}h ${m}m ${s}s`);
-            }
-
-            // Local market status
-            const day = now.getDay();
-            const time = now.getHours() * 60 + now.getMinutes();
-            if (day === 0 || day === 6) setMarketStatus('CLOSED');
-            else if (time < 555) setMarketStatus('PRE_MARKET');
-            else if (time > 930) setMarketStatus('POST_MARKET');
-            else setMarketStatus('OPEN');
-        };
-
-        updateTimer();
-        const interval = setInterval(updateTimer, 1000);
-        return () => clearInterval(interval);
-    }, []);
-
-    const getStatusColor = () => {
-        if (marketStatus === 'OPEN') return colors.accentNeonGreen;
-        if (marketStatus === 'PRE_MARKET') return colors.statusPre;
-        if (marketStatus === 'POST_MARKET') return colors.textSecondary;
-        return colors.textMuted;
+  // Poll market status
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const data = await api.getMarketStatus();
+        if (data) {
+          setMarketStatus(data.status);
+          setIsTradingDay(data.is_trading_day);
+        }
+      } catch (e) {}
     };
+    fetchStatus();
+    const interval = setInterval(fetchStatus, MARKET_STATUS_REFRESH_INTERVAL);
+    return () => clearInterval(interval);
+  }, []);
 
-    const logoSource = theme === 'dark'
-        ? require('../../assets/logo.png')
-        : require('../../assets/logo_light.png');
+  // Local countdown timer
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCountdown(formatCountdown(getSecondsUntilCutoff()));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
-    return (
-        <View style={[styles.header, { backgroundColor: colors.headerBg, borderBottomColor: colors.borderPrimary }]}>
-            <View style={styles.left}>
-                <Image source={logoSource} style={styles.logoImage} resizeMode="contain" />
-                <Text style={[styles.logoText, { color: colors.primary }]}>MF-Forecast</Text>
-            </View>
+  const statusColor = marketStatus === 'OPEN' ? colors.accentNeonGreen : colors.textMuted;
 
-            <View style={styles.center}>
-                <View style={styles.statusBlock}>
-                    {marketStatus === 'OPEN' && (
-                        <View style={[styles.liveDot, {
-                            backgroundColor: colors.accentNeonGreen,
-                            shadowColor: colors.accentNeonGreen,
-                            shadowOffset: { width: 0, height: 0 },
-                            shadowOpacity: 0.8,
-                            shadowRadius: 4,
-                            elevation: 4,
-                        }]} />
-                    )}
-                    <Text style={[styles.statusText, { color: getStatusColor() }]}>
-                        {marketStatus.replace('_', ' ')}
-                    </Text>
-                </View>
-                <Text style={[styles.cutoffText, { color: colors.textMuted }]}>{countdown}</Text>
-            </View>
+  const logoDark = require('../assets/logo.png');
+  const logoLight = require('../assets/logo_light.png');
 
-            <View style={styles.right}>
-                <TouchableOpacity onPress={toggleTheme} style={styles.iconBtn}>
-                    <Ionicons name={theme === 'dark' ? 'sunny' : 'moon'} size={20} color={colors.textSecondary} />
-                </TouchableOpacity>
-            </View>
+  return (
+    <View style={[styles.header, { backgroundColor: colors.headerBg, borderBottomColor: colors.borderPrimary }]}>
+      <View style={styles.headerContent}>
+        {/* Logo */}
+        <View style={styles.brand}>
+          <Image
+            source={isDark ? logoDark : logoLight}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <Text style={[styles.brandText, { color: colors.accentCyan }]}>MF-Forecast</Text>
         </View>
-    );
-};
+
+        {/* Status & Controls */}
+        <View style={styles.rightSection}>
+          {/* Market Status */}
+          <View style={styles.statusBlock}>
+            <View style={styles.statusRow}>
+              {marketStatus === 'OPEN' && (
+                <View style={[styles.dotLive, { backgroundColor: colors.accentNeonGreen }]} />
+              )}
+              <Text style={[styles.statusText, { color: statusColor }]}>
+                {marketStatus ? marketStatus.replace('_', ' ') : 'CLOSED'}
+              </Text>
+            </View>
+            <Text style={[styles.cutoffText, { color: colors.textMuted }]}>
+              {isTradingDay ? countdown : 'Holiday'}
+            </Text>
+          </View>
+
+          {/* Theme Toggle */}
+          <TouchableOpacity onPress={toggleTheme} style={styles.iconBtn}>
+            {isDark ? (
+              <Sun size={18} color={colors.textSecondary} />
+            ) : (
+              <Moon size={18} color={colors.textSecondary} />
+            )}
+          </TouchableOpacity>
+
+          {/* Auth */}
+          {user ? (
+            <View style={styles.userSection}>
+              <View style={[styles.avatar, { backgroundColor: colors.accentCyan }]}>
+                <Text style={styles.avatarText}>
+                  {user.full_name ? user.full_name[0] : 'U'}
+                </Text>
+              </View>
+              <TouchableOpacity onPress={logout} style={styles.iconBtn}>
+                <LogOut size={16} color={colors.accentRed} />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity
+              onPress={() => navigation.navigate('LoginScreen')}
+              style={[styles.loginBtn, { backgroundColor: colors.accentCyan }]}
+            >
+              <Text style={styles.loginBtnText}>Login</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 16,
-        paddingVertical: 10,
-        borderBottomWidth: 1,
-    },
-    left: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-    },
-    logoImage: {
-        width: 28,
-        height: 28,
-        borderRadius: 6,
-    },
-    logoText: {
-        fontSize: 15,
-        fontWeight: '800',
-        letterSpacing: -0.5,
-        textTransform: 'uppercase',
-    },
-    center: {
-        flex: 1,
-        alignItems: 'center',
-    },
-    statusBlock: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 4,
-    },
-    liveDot: {
-        width: 6,
-        height: 6,
-        borderRadius: 3,
-    },
-    statusText: {
-        fontSize: 10,
-        fontWeight: '700',
-        fontFamily: 'monospace',
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-    },
-    cutoffText: {
-        fontSize: 9,
-        fontFamily: 'monospace',
-        marginTop: 2,
-    },
-    right: {
-        flex: 1,
-        alignItems: 'flex-end',
-    },
-    iconBtn: {
-        padding: 6,
-    },
+  header: {
+    borderBottomWidth: 1,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.lg,
+    paddingTop: 12,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  brand: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  logo: {
+    width: 32,
+    height: 32,
+    borderRadius: radii.sm,
+  },
+  brandText: {
+    fontSize: fontSizes['2xl'],
+    fontWeight: '800',
+    letterSpacing: -0.5,
+    textTransform: 'uppercase',
+  },
+  rightSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  statusBlock: {
+    alignItems: 'flex-end',
+  },
+  statusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  dotLive: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  statusText: {
+    fontSize: fontSizes.xs,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  cutoffText: {
+    fontSize: fontSizes['2xs'],
+    fontFamily: 'monospace',
+    marginTop: 1,
+  },
+  iconBtn: {
+    padding: spacing.xs,
+  },
+  userSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  avatar: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: fontSizes.sm,
+  },
+  loginBtn: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.md,
+  },
+  loginBtnText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: fontSizes.sm,
+  },
 });
-
-export default Header;

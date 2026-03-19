@@ -1,43 +1,45 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { STORAGE_KEYS } from '../config';
-import { getColors } from '../theme/colors';
+import { STORAGE_KEYS } from '../api/config';
 
 const ThemeContext = createContext();
 
 export const useTheme = () => useContext(ThemeContext);
 
 export const ThemeProvider = ({ children }) => {
-    const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState('dark');
+  const [isLoaded, setIsLoaded] = useState(false);
 
-    useEffect(() => {
-        loadTheme();
-    }, []);
-
+  useEffect(() => {
     const loadTheme = async () => {
-        try {
-            const savedTheme = await AsyncStorage.getItem(STORAGE_KEYS.THEME);
-            if (savedTheme) {
-                setTheme(savedTheme);
-            }
-        } catch (e) {
-            // ignore
+      try {
+        const savedTheme = await AsyncStorage.getItem(STORAGE_KEYS.THEME);
+        if (savedTheme) {
+          setTheme(savedTheme);
         }
+      } catch (e) {
+        // default to dark
+      }
+      setIsLoaded(true);
     };
+    loadTheme();
+  }, []);
 
-    useEffect(() => {
-        AsyncStorage.setItem(STORAGE_KEYS.THEME, theme).catch(() => {});
-    }, [theme]);
+  const toggleTheme = async () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.THEME, newTheme);
+    } catch (e) {
+      // ignore
+    }
+  };
 
-    const toggleTheme = () => {
-        setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
-    };
+  if (!isLoaded) return null;
 
-    const colors = getColors(theme);
-
-    return (
-        <ThemeContext.Provider value={{ theme, toggleTheme, colors }}>
-            {children}
-        </ThemeContext.Provider>
-    );
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme, isDark: theme === 'dark' }}>
+      {children}
+    </ThemeContext.Provider>
+  );
 };

@@ -1,196 +1,251 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
-import { LineChart } from 'react-native-chart-kit';
-import api from '../api';
-import { useTheme } from '../context/ThemeContext';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRoute, useNavigation } from '@react-navigation/native';
+import { ArrowLeft } from 'lucide-react-native';
+import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
+import api from '../api/api';
+import { useColors, spacing, radii, fontSizes } from '../theme';
 
-const screenWidth = Dimensions.get('window').width;
+const CHART_HEIGHT = 250;
 
-const IndexDetailScreen = ({ route, navigation }) => {
-    const { symbol } = route.params;
-    const { colors } = useTheme();
-    const [period, setPeriod] = useState('1m');
+export default function IndexDetailScreen() {
+  const route = useRoute();
+  const navigation = useNavigation();
+  const { symbol } = route.params;
+  const colors = useColors();
 
-    const { data: indicesData } = useQuery({
-        queryKey: ['marketIndices'],
-        queryFn: api.getMarketIndices,
-        staleTime: 60000,
-    });
+  const [index, setIndex] = useState(null);
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [period, setPeriod] = useState('1m');
 
-    const indexInfo = indicesData?.find(i => i.symbol === symbol);
+  const screenWidth = Dimensions.get('window').width - spacing.lg * 2 - spacing['2xl'] * 2;
+  const periodLabels = { '1m': '1 Month', '3m': '3 Months', '1y': '1 Year', '3y': '3 Years' };
 
-    const { data, isLoading, error } = useQuery({
-        queryKey: ['indexHistory', symbol, period],
-        queryFn: () => api.getIndexHistory(symbol, period),
-        enabled: !!symbol,
-    });
+  // Fetch index metadata
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const indices = await api.getMarketIndices();
+        const found = indices?.find((i) => i.symbol === symbol);
+        if (found) setIndex(found);
+      } catch (e) {}
+    };
+    fetch();
+  }, [symbol]);
 
-    const periodLabels = { '1m': '1 Month', '3m': '3 Months', '1y': '1 Year', '3y': '3 Years' };
-    const periods = ['1M', '3M', '1Y', '3Y'];
+  // Fetch history
+  useEffect(() => {
+    const fetchHistory = async () => {
+      setLoading(true);
+      try {
+        const data = await api.getIndexHistory(symbol, period);
+        setHistory(data?.history || []);
+      } catch (e) {
+        setHistory([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchHistory();
+  }, [symbol, period]);
 
-    let chartData = [];
-    if (data?.history?.length) {
-        chartData = data.history.map(item => ({
-            date: new Date(item.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }),
-            price: parseFloat(item.price),
-        }));
-    }
+  const chartData = history.map((item) => ({
+    date: new Date(item.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }),
+    price: parseFloat(item.price),
+  }));
 
-    const values = chartData.map(d => d.price);
-    const isPositive = values.length > 0 && values[values.length - 1] >= values[0];
-    const periodChange = values.length > 0 ? values[values.length - 1] - values[0] : 0;
-    const periodChangePct = values.length > 0 ? ((values[values.length - 1] - values[0]) / values[0]) * 100 : 0;
-    const chartColor = isPositive ? colors.accentGreen : colors.accentRed;
+  const priceValues = chartData.map((d) => d.price);
+  const minPrice = priceValues.length ? Math.min(...priceValues) : 0;
+  const maxPrice = priceValues.length ? Math.max(...priceValues) : 1;
+  const range = maxPrice - minPrice || 1;
 
-    return (
-        <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
-            <View style={styles.content}>
-                {/* Header Card */}
-                <View style={[styles.headerCard, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
-                    <View style={styles.headerTop}>
-                        <View>
-                            <View style={styles.labelRow}>
-                                <Text style={[styles.indexLabel, { color: colors.textMuted }]}>INDEX</Text>
-                                <View style={[styles.liveDot, {
-                                    backgroundColor: colors.accentNeonGreen,
-                                    shadowColor: colors.accentNeonGreen,
-                                    shadowOffset: { width: 0, height: 0 },
-                                    shadowOpacity: 0.8,
-                                    shadowRadius: 4,
-                                    elevation: 4,
-                                }]} />
-                            </View>
-                            <Text style={[styles.indexName, { color: colors.textPrimary }]}>
-                                {indexInfo?.name || decodeURIComponent(symbol)}
-                            </Text>
-                        </View>
-                        {indexInfo && (
-                            <View style={styles.changeBlock}>
-                                <Text style={[styles.dailyChange, { color: indexInfo.change >= 0 ? colors.accentGreen : colors.accentRed }]}>
-                                    {indexInfo.change >= 0 ? '+' : ''}{indexInfo.change?.toFixed(2)} ({indexInfo.change_pct?.toFixed(2)}%)
-                                </Text>
-                                <Text style={[styles.dayLabel, { color: colors.textMuted }]}>1 Day</Text>
-                            </View>
-                        )}
-                    </View>
+  const firstPrice = chartData[0]?.price ?? 0;
+  const lastPrice = chartData[chartData.length - 1]?.price ?? 0;
+  const periodChange = lastPrice - firstPrice;
+  const periodChangePct = firstPrice ? ((lastPrice - firstPrice) / firstPrice) * 100 : 0;
+  const isPositive = lastPrice >= firstPrice;
+  const strokeColor = isPositive ? colors.chartGreen : colors.chartRed;
 
-                    {indexInfo && (
-                        <Text style={[styles.currentPrice, { color: colors.textPrimary }]}>
-                            {indexInfo.price?.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
-                        </Text>
-                    )}
+  const chartWidth = Math.max(screenWidth, 200);
+  const points = chartData.map((d, i) => ({
+    x: (i / Math.max(chartData.length - 1, 1)) * chartWidth,
+    y: CHART_HEIGHT - ((d.price - minPrice) / range) * (CHART_HEIGHT - 20) - 10,
+  }));
 
-                    {/* Period Selector */}
-                    <View style={[styles.periodRow, { borderTopColor: colors.borderPrimary }]}>
-                        {periods.map(p => (
-                            <TouchableOpacity
-                                key={p}
-                                style={[
-                                    styles.periodBtn,
-                                    { borderColor: colors.borderPrimary },
-                                    period === p.toLowerCase() && { backgroundColor: colors.primaryDim }
-                                ]}
-                                onPress={() => setPeriod(p.toLowerCase())}
-                            >
-                                <Text style={[styles.periodText, { color: period === p.toLowerCase() ? colors.primary : colors.textMuted }]}>
-                                    {p}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
+  let linePath = '';
+  let areaPath = '';
+  if (points.length > 0) {
+    linePath = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 1; i < points.length; i++) linePath += ` L ${points[i].x} ${points[i].y}`;
+    areaPath = linePath + ` L ${points[points.length - 1].x} ${CHART_HEIGHT} L ${points[0].x} ${CHART_HEIGHT} Z`;
+  }
 
-                    {values.length > 0 && (
-                        <View style={styles.statsBlock}>
-                            <Text style={[styles.statsLabel, { color: colors.textMuted }]}>{periodLabels[period]} Change</Text>
-                            <Text style={[styles.statsValue, { color: isPositive ? colors.accentGreen : colors.accentRed }]}>
-                                {isPositive ? '+' : ''}{periodChange.toFixed(2)} ({periodChangePct.toFixed(2)}%)
-                            </Text>
-                        </View>
-                    )}
-                </View>
+  return (
+    <SafeAreaView style={[styles.safe, { backgroundColor: colors.bgPrimary }]} edges={['top']}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* Back */}
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={[styles.backBtn, { backgroundColor: colors.surfaceHover }]}
+        >
+          <ArrowLeft size={18} color={colors.textSecondary} />
+          <Text style={[styles.backText, { color: colors.textSecondary }]}>Back</Text>
+        </TouchableOpacity>
 
-                {/* Chart Card */}
-                <View style={[styles.chartCard, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
-                    {isLoading ? (
-                        <View style={styles.loadingChart}>
-                            <ActivityIndicator color={colors.primary} size="large" />
-                            <Text style={[styles.loadingText, { color: colors.textMuted }]}>Loading Chart Data...</Text>
-                        </View>
-                    ) : error ? (
-                        <View style={styles.errorChart}>
-                            <Text style={{ fontSize: 32, marginBottom: 8 }}>⚠️</Text>
-                            <Text style={{ color: colors.accentRed, fontSize: 14, fontWeight: '700' }}>Unavailable</Text>
-                        </View>
-                    ) : values.length > 0 ? (
-                        <LineChart
-                            data={{
-                                labels: [],
-                                datasets: [{ data: values }],
-                            }}
-                            width={screenWidth - 48}
-                            height={300}
-                            withDots={false}
-                            withInnerLines={false}
-                            withOuterLines={false}
-                            withHorizontalLabels={true}
-                            withVerticalLabels={false}
-                            chartConfig={{
-                                backgroundColor: 'transparent',
-                                backgroundGradientFrom: colors.card,
-                                backgroundGradientTo: colors.card,
-                                color: () => chartColor,
-                                fillShadowGradientFrom: chartColor,
-                                fillShadowGradientFromOpacity: 0.2,
-                                fillShadowGradientTo: chartColor,
-                                fillShadowGradientToOpacity: 0,
-                                strokeWidth: 2.5,
-                                propsForBackgroundLines: { stroke: colors.borderSubtle },
-                                labelColor: () => colors.textMuted,
-                                decimalPlaces: 0,
-                            }}
-                            bezier
-                            style={styles.chart}
-                        />
-                    ) : (
-                        <View style={styles.emptyChart}>
-                            <Text style={{ fontSize: 32, marginBottom: 8 }}>📉</Text>
-                            <Text style={{ color: colors.textMuted }}>No data for this period</Text>
-                        </View>
-                    )}
-                </View>
+        {/* Header Card */}
+        <View style={[styles.headerCard, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}>
+          <View style={styles.headerRow}>
+            <View>
+              <View style={styles.indexLabel}>
+                <View style={[styles.dotLive, { backgroundColor: colors.accentNeonGreen }]} />
+                <Text style={[styles.indexLabelText, { color: colors.textMuted }]}>Index</Text>
+              </View>
+              <Text style={[styles.indexName, { color: colors.textPrimary }]}>
+                {index?.name || decodeURIComponent(symbol)}
+              </Text>
             </View>
+            {index && (
+              <View style={{ alignItems: 'flex-end' }}>
+                <Text
+                  style={[
+                    styles.indexPrice,
+                    { color: (index.change ?? 0) >= 0 ? colors.accentGreen : colors.accentRed },
+                  ]}
+                >
+                  {index.price?.toFixed(2) ?? '-'}
+                </Text>
+                <Text
+                  style={[
+                    styles.indexChange,
+                    { color: (index.change ?? 0) >= 0 ? colors.accentGreen : colors.accentRed },
+                  ]}
+                >
+                  {(index.change ?? 0) >= 0 ? '▲' : '▼'} {Math.abs(index.change ?? 0).toFixed(2)} (
+                  {Math.abs(index.change_pct ?? 0).toFixed(2)}%)
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
 
-            <View style={{ height: 100 }} />
-        </ScrollView>
-    );
-};
+        {/* Period Selector */}
+        <View style={[styles.periodBar, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
+          {['1M', '3M', '1Y', '3Y'].map((p) => (
+            <TouchableOpacity
+              key={p}
+              style={[styles.periodBtn, period === p.toLowerCase() && { backgroundColor: `${colors.accentCyan}33` }]}
+              onPress={() => setPeriod(p.toLowerCase())}
+            >
+              <Text
+                style={[
+                  styles.periodText,
+                  { color: period === p.toLowerCase() ? colors.accentCyan : colors.textMuted, fontWeight: period === p.toLowerCase() ? '700' : '400' },
+                ]}
+              >
+                {p}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Stats */}
+        {chartData.length > 0 && (
+          <View style={styles.statsRow}>
+            <Text style={[styles.statsLabel, { color: colors.textMuted }]}>{periodLabels[period]} Change</Text>
+            <Text style={[styles.statsValue, { color: periodChange >= 0 ? colors.accentGreen : colors.accentRed }]}>
+              {periodChange >= 0 ? '+' : ''}{periodChange.toFixed(2)}
+              <Text style={styles.statsPct}> ({periodChangePct.toFixed(2)}%)</Text>
+            </Text>
+          </View>
+        )}
+
+        {/* Chart */}
+        {loading ? (
+          <ActivityIndicator size="large" color={colors.accentCyan} style={{ marginTop: 40 }} />
+        ) : chartData.length === 0 ? (
+          <View style={styles.emptyChart}>
+            <Text style={{ fontSize: 24, marginBottom: 8 }}>📊</Text>
+            <Text style={[styles.emptyText, { color: colors.textMuted }]}>No historical data</Text>
+          </View>
+        ) : (
+          <View style={[styles.chartCard, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}>
+            <Svg width={chartWidth} height={CHART_HEIGHT}>
+              <Defs>
+                <SvgLinearGradient id="indexGrad" x1="0" y1="0" x2="0" y2="1">
+                  <Stop offset="0" stopColor={strokeColor} stopOpacity="0.3" />
+                  <Stop offset="1" stopColor={strokeColor} stopOpacity="0" />
+                </SvgLinearGradient>
+              </Defs>
+              {areaPath && <Path d={areaPath} fill="url(#indexGrad)" />}
+              {linePath && <Path d={linePath} stroke={strokeColor} strokeWidth={2.5} fill="none" />}
+            </Svg>
+          </View>
+        )}
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
 
 const styles = StyleSheet.create({
-    container: { flex: 1 },
-    content: { padding: 16, gap: 12 },
-    headerCard: { borderRadius: 16, borderWidth: 1, padding: 16 },
-    headerTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 },
-    labelRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 },
-    indexLabel: { fontSize: 10, fontWeight: '800', letterSpacing: 2, textTransform: 'uppercase' },
-    liveDot: { width: 6, height: 6, borderRadius: 3 },
-    indexName: { fontSize: 18, fontWeight: '700' },
-    changeBlock: { alignItems: 'flex-end' },
-    dailyChange: { fontSize: 12, fontWeight: '700', fontFamily: 'monospace' },
-    dayLabel: { fontSize: 9, fontWeight: '700', textTransform: 'uppercase', marginTop: 2 },
-    currentPrice: { fontSize: 28, fontWeight: '800', fontFamily: 'monospace', marginBottom: 12 },
-    periodRow: { flexDirection: 'row', gap: 4, borderTopWidth: 1, paddingTop: 12, marginBottom: 8 },
-    periodBtn: { flex: 1, paddingVertical: 6, borderRadius: 8, borderWidth: 1, alignItems: 'center' },
-    periodText: { fontSize: 12, fontWeight: '700', fontFamily: 'monospace' },
-    statsBlock: { marginTop: 4 },
-    statsLabel: { fontSize: 9, fontFamily: 'monospace', textTransform: 'uppercase', letterSpacing: 1 },
-    statsValue: { fontSize: 20, fontWeight: '800', fontFamily: 'monospace', marginTop: 2 },
-    chartCard: { borderRadius: 16, borderWidth: 1, padding: 8, overflow: 'hidden' },
-    chart: { borderRadius: 12 },
-    loadingChart: { height: 300, alignItems: 'center', justifyContent: 'center' },
-    loadingText: { fontSize: 12, fontFamily: 'monospace', marginTop: 12 },
-    errorChart: { height: 300, alignItems: 'center', justifyContent: 'center' },
-    emptyChart: { height: 300, alignItems: 'center', justifyContent: 'center' },
+  safe: { flex: 1 },
+  scrollContent: { padding: spacing.lg, paddingBottom: 100 },
+  backBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radii.full,
+    alignSelf: 'flex-start',
+    marginBottom: spacing.lg,
+  },
+  backText: { fontSize: fontSizes.sm, fontWeight: '600' },
+  headerCard: {
+    borderWidth: 1,
+    borderRadius: radii.lg,
+    padding: spacing['2xl'],
+    marginBottom: spacing.lg,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  indexLabel: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginBottom: spacing.xs,
+  },
+  dotLive: { width: 6, height: 6, borderRadius: 3 },
+  indexLabelText: { fontSize: fontSizes.xs, textTransform: 'uppercase', fontWeight: '600', letterSpacing: 0.5 },
+  indexName: { fontSize: fontSizes.xl, fontWeight: '700' },
+  indexPrice: { fontSize: fontSizes['2xl'], fontWeight: '800', fontFamily: 'monospace' },
+  indexChange: { fontSize: fontSizes.sm, fontFamily: 'monospace', marginTop: 2 },
+  periodBar: {
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderRadius: radii.md,
+    padding: 3,
+    marginBottom: spacing.lg,
+  },
+  periodBtn: { flex: 1, alignItems: 'center', paddingVertical: spacing.sm, borderRadius: radii.sm },
+  periodText: { fontSize: fontSizes.sm, fontFamily: 'monospace' },
+  statsRow: { marginBottom: spacing.lg },
+  statsLabel: { fontSize: fontSizes.xs, fontFamily: 'monospace', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 },
+  statsValue: { fontSize: fontSizes['2xl'], fontWeight: '700', fontFamily: 'monospace' },
+  statsPct: { fontSize: fontSizes.sm },
+  chartCard: { borderWidth: 1, borderRadius: radii.lg, padding: spacing.lg, overflow: 'hidden' },
+  emptyChart: { alignItems: 'center', paddingVertical: 40 },
+  emptyText: { fontFamily: 'monospace', fontSize: fontSizes.sm },
 });
-
-export default IndexDetailScreen;

@@ -1,158 +1,186 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
-import { useTheme } from '../context/ThemeContext';
-import api from '../api';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useColors, spacing, radii, fontSizes } from '../theme';
+import api from '../api/api';
 
-const VISIBLE_COUNT = 5;
+const VISIBLE_INDICES_COUNT = 5;
 
-const MarketTicker = ({ onNavigateToIndices, onNavigateToDetail }) => {
-    const { colors } = useTheme();
-    const [indices, setIndices] = useState([]);
-    const [loading, setLoading] = useState(true);
+export default function MarketTicker() {
+  const [indices, setIndices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const colors = useColors();
+  const navigation = useNavigation();
 
-    useEffect(() => {
-        const fetchIndices = async () => {
-            try {
-                const data = await api.getMarketIndices();
-                if (Array.isArray(data)) setIndices(data);
-            } catch (err) {
-                console.error('Failed to fetch market indices:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchIndices();
-        const interval = setInterval(fetchIndices, 60000);
-        return () => clearInterval(interval);
-    }, []);
-
-    if (loading || indices.length === 0) return null;
-
-    const visible = indices.slice(0, VISIBLE_COUNT);
-    const hasMore = indices.length > VISIBLE_COUNT;
-
-    const renderCard = ({ item }) => {
-        const isPositive = item.change >= 0;
-        return (
-            <TouchableOpacity
-                style={[styles.card, { backgroundColor: colors.indexCardBg, borderColor: colors.borderSubtle }]}
-                onPress={() => onNavigateToDetail?.(item.symbol)}
-                activeOpacity={0.7}
-            >
-                <Text style={[styles.indexName, { color: colors.textSecondary }]} numberOfLines={1}>
-                    {item.name}
-                </Text>
-                <Text style={[styles.price, { color: isPositive ? colors.accentGreen : colors.accentRed }]}>
-                    {item.price?.toFixed(2) ?? '-'}
-                </Text>
-                <Text style={[styles.change, { color: isPositive ? colors.accentGreen : colors.accentRed }]}>
-                    {isPositive ? '▲' : '▼'} {Math.abs(item.change ?? 0).toFixed(2)} ({Math.abs(item.change_pct ?? 0).toFixed(2)}%)
-                </Text>
-            </TouchableOpacity>
-        );
+  useEffect(() => {
+    const fetchIndices = async () => {
+      try {
+        const data = await api.getMarketIndices();
+        if (Array.isArray(data)) setIndices(data);
+      } catch (err) {
+        console.log('Market indices fetch error:', err);
+      } finally {
+        setLoading(false);
+      }
     };
+    fetchIndices();
+    const interval = setInterval(fetchIndices, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
+  if (loading) {
     return (
-        <View style={[styles.container, { borderBottomColor: colors.borderPrimary, backgroundColor: colors.tickerBg }]}>
-            <View style={styles.header}>
-                <View style={[styles.liveDot, {
-                    backgroundColor: colors.accentNeonGreen,
-                    shadowColor: colors.accentNeonGreen,
-                    shadowOffset: { width: 0, height: 0 },
-                    shadowOpacity: 0.8,
-                    shadowRadius: 4,
-                    elevation: 4,
-                }]} />
-                <Text style={[styles.label, { color: colors.textMuted }]}>Market Indices</Text>
-            </View>
-            <FlatList
-                data={visible}
-                renderItem={renderCard}
-                keyExtractor={(item) => item.symbol}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.listContent}
-                ListFooterComponent={hasMore ? (
-                    <TouchableOpacity
-                        style={[styles.moreBtn, { backgroundColor: colors.primaryDim, borderColor: colors.borderGlow }]}
-                        onPress={onNavigateToIndices}
-                    >
-                        <Text style={[styles.moreCount, { color: colors.primary }]}>+{indices.length - VISIBLE_COUNT}</Text>
-                        <Text style={[styles.moreText, { color: colors.primary }]}>More</Text>
-                    </TouchableOpacity>
-                ) : null}
-            />
-        </View>
+      <View style={[styles.container, { backgroundColor: colors.tickerBg, borderBottomColor: colors.borderPrimary }]}>
+        <ActivityIndicator size="small" color={colors.accentCyan} />
+      </View>
     );
-};
+  }
+
+  if (!indices.length) return null;
+
+  const visibleIndices = indices.slice(0, VISIBLE_INDICES_COUNT);
+  const hasMore = indices.length > VISIBLE_INDICES_COUNT;
+  const remainingCount = indices.length - VISIBLE_INDICES_COUNT;
+
+  return (
+    <View style={[styles.container, { backgroundColor: colors.tickerBg, borderBottomColor: colors.borderPrimary }]}>
+      <View style={styles.headerRow}>
+        <View style={styles.labelRow}>
+          <View style={[styles.dotLive, { backgroundColor: colors.accentNeonGreen }]} />
+          <Text style={[styles.labelText, { color: colors.textMuted }]}>Market Indices</Text>
+        </View>
+      </View>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {visibleIndices.map((index) => {
+          const isPositive = index.change >= 0;
+          return (
+            <TouchableOpacity
+              key={index.symbol}
+              style={[styles.card, { backgroundColor: colors.indexCardBg, borderColor: colors.borderSubtle }]}
+              onPress={() => navigation.navigate('IndexDetail', { symbol: index.symbol })}
+              activeOpacity={0.7}
+            >
+              <Text style={[styles.indexName, { color: colors.textSecondary }]} numberOfLines={1}>
+                {index.name}
+              </Text>
+              <Text
+                style={[
+                  styles.indexPrice,
+                  { color: isPositive ? colors.accentGreen : colors.accentRed },
+                ]}
+              >
+                {index.price?.toFixed(2) ?? '-'}
+              </Text>
+              <Text
+                style={[
+                  styles.indexChange,
+                  { color: isPositive ? colors.accentGreen : colors.accentRed },
+                ]}
+              >
+                {isPositive ? '▲' : '▼'} {Math.abs(index.change ?? 0).toFixed(2)} (
+                {Math.abs(index.change_pct ?? 0).toFixed(2)}%)
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+
+        {hasMore && (
+          <TouchableOpacity
+            style={[styles.moreBtn, { backgroundColor: colors.surfaceHover, borderColor: colors.borderPrimary }]}
+            onPress={() => navigation.navigate('AllIndices')}
+          >
+            <Text style={[styles.moreCount, { color: colors.accentCyan }]}>+{remainingCount}</Text>
+            <Text style={[styles.moreText, { color: colors.textMuted }]}>More</Text>
+          </TouchableOpacity>
+        )}
+      </ScrollView>
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
-    container: {
-        paddingVertical: 12,
-        borderBottomWidth: 1,
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 16,
-        marginBottom: 8,
-        gap: 6,
-    },
-    liveDot: {
-        width: 6,
-        height: 6,
-        borderRadius: 3,
-    },
-    label: {
-        fontSize: 11,
-        fontWeight: '600',
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-    },
-    listContent: {
-        paddingHorizontal: 12,
-        gap: 8,
-    },
-    card: {
-        paddingHorizontal: 14,
-        paddingVertical: 10,
-        borderRadius: 12,
-        borderWidth: 1,
-        minWidth: 130,
-    },
-    indexName: {
-        fontSize: 10,
-        fontWeight: '600',
-        marginBottom: 4,
-    },
-    price: {
-        fontSize: 15,
-        fontWeight: '700',
-        fontFamily: 'monospace',
-    },
-    change: {
-        fontSize: 10,
-        fontFamily: 'monospace',
-        marginTop: 2,
-    },
-    moreBtn: {
-        paddingHorizontal: 16,
-        paddingVertical: 10,
-        borderRadius: 12,
-        borderWidth: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        minWidth: 70,
-    },
-    moreCount: {
-        fontSize: 16,
-        fontWeight: '800',
-    },
-    moreText: {
-        fontSize: 9,
-        fontWeight: '600',
-        textTransform: 'uppercase',
-    },
+  container: {
+    borderBottomWidth: 1,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
+  labelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  dotLive: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  labelText: {
+    fontSize: fontSizes.xs,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+  },
+  scrollContent: {
+    gap: spacing.sm,
+    paddingRight: spacing.md,
+  },
+  card: {
+    borderWidth: 1,
+    borderRadius: radii.md,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    minWidth: 130,
+  },
+  indexName: {
+    fontSize: fontSizes.xs,
+    fontWeight: '500',
+    marginBottom: 2,
+  },
+  indexPrice: {
+    fontSize: fontSizes.base,
+    fontWeight: '700',
+    fontFamily: 'monospace',
+  },
+  indexChange: {
+    fontSize: fontSizes['2xs'],
+    fontFamily: 'monospace',
+    marginTop: 2,
+  },
+  moreBtn: {
+    borderWidth: 1,
+    borderRadius: radii.md,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    minWidth: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  moreCount: {
+    fontSize: fontSizes.xl,
+    fontWeight: '700',
+  },
+  moreText: {
+    fontSize: fontSizes['2xs'],
+    textTransform: 'uppercase',
+    fontWeight: '600',
+    letterSpacing: 0.5,
+  },
 });
-
-export default MarketTicker;
