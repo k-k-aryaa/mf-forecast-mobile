@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
-import { Search, ChevronDown, Check } from 'lucide-react-native';
+import { Search, ChevronDown, Check, Sparkles } from 'lucide-react-native';
 import api from '../api/api';
 import { useColors, spacing, radii, fontSizes } from '../theme';
 
@@ -24,12 +24,14 @@ export default function FundSelector({ selectedFundId, onSelect }) {
     queryFn: api.getFunds,
   });
 
+  const searchTerms = searchQuery.toLowerCase().trim().split(/\s+/);
   const filteredFunds =
-    funds?.filter(
-      (fund) =>
-        fund.scheme_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        fund.scheme_code?.toLowerCase().includes(searchQuery.toLowerCase())
-    ) || [];
+    funds?.filter((fund) => {
+      if (searchTerms.length === 0 || searchQuery.trim() === '') return true;
+      const name = fund.scheme_name.toLowerCase();
+      const code = fund.scheme_code?.toLowerCase() || '';
+      return searchTerms.every((term) => name.includes(term) || code.includes(term));
+    }) || [];
 
   const selectedFund = funds?.find((f) => f.id === selectedFundId);
 
@@ -41,38 +43,54 @@ export default function FundSelector({ selectedFundId, onSelect }) {
 
   return (
     <View style={styles.wrapper}>
-      <TouchableOpacity
-        style={[
-          styles.selector,
-          {
-            backgroundColor: colors.bgCard,
-            borderColor: colors.borderPrimary,
-          },
-        ]}
-        onPress={() => setIsOpen(true)}
-        activeOpacity={0.7}
-      >
-        <View style={styles.selectorContent}>
-          {selectedFund ? (
-            <View>
-              <Text style={[styles.fundName, { color: colors.textPrimary }]} numberOfLines={1}>
-                {selectedFund.scheme_name}
-              </Text>
-              <Text style={[styles.fundCode, { color: colors.textMuted }]}>
-                {selectedFund.scheme_code}
-              </Text>
-            </View>
-          ) : (
-            <Text style={[styles.placeholder, { color: colors.textMuted }]}>
-              Select a mutual fund...
-            </Text>
-          )}
-        </View>
-        <ChevronDown size={20} color={colors.textMuted} />
-      </TouchableOpacity>
+      {/* Label */}
+      <View style={styles.labelRow}>
+        <Sparkles size={14} color={colors.accentCyan} />
+        <Text style={[styles.labelText, { color: colors.accentCyan }]}>
+          Search & Select a Mutual Fund
+        </Text>
+      </View>
 
+      {/* Selected fund chip OR search bar trigger */}
+      {selectedFund ? (
+        <TouchableOpacity
+          style={[styles.chipBar, { borderColor: `${colors.accentCyan}40` }]}
+          onPress={() => setIsOpen(true)}
+          activeOpacity={0.7}
+        >
+          <View style={[styles.chipDot, { backgroundColor: colors.accentCyan }]} />
+          <View style={styles.chipTextWrap}>
+            <Text style={[styles.chipName, { color: colors.textPrimary }]} numberOfLines={1}>
+              {selectedFund.scheme_name}
+            </Text>
+            {selectedFund.scheme_code && (
+              <View style={[styles.chipCodeBadge, { backgroundColor: `${colors.accentCyan}18` }]}>
+                <Text style={[styles.chipCodeText, { color: colors.accentCyan }]}>
+                  {selectedFund.scheme_code}
+                </Text>
+              </View>
+            )}
+          </View>
+          <ChevronDown size={18} color={colors.textMuted} />
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          style={[styles.searchBar, { borderColor: colors.borderPrimary, backgroundColor: colors.bgCard }]}
+          onPress={() => setIsOpen(true)}
+          activeOpacity={0.7}
+        >
+          <Search size={18} color={colors.textMuted} />
+          <Text style={[styles.searchPlaceholder, { color: colors.textMuted }]}>
+            Type to search mutual funds...
+          </Text>
+          <View style={[styles.divider, { backgroundColor: colors.borderPrimary }]} />
+          <ChevronDown size={18} color={colors.textMuted} />
+        </TouchableOpacity>
+      )}
+
+      {/* Fund picker modal */}
       <Modal visible={isOpen} animationType="slide" transparent>
-        <View style={[styles.modalOverlay]}>
+        <View style={styles.modalOverlay}>
           <View
             style={[
               styles.modalContent,
@@ -80,9 +98,7 @@ export default function FundSelector({ selectedFundId, onSelect }) {
             ]}
           >
             <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
-                Select Fund
-              </Text>
+              <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>Select Fund</Text>
               <TouchableOpacity onPress={() => setIsOpen(false)}>
                 <Text style={[styles.closeBtn, { color: colors.accentCyan }]}>Close</Text>
               </TouchableOpacity>
@@ -106,11 +122,7 @@ export default function FundSelector({ selectedFundId, onSelect }) {
             </View>
 
             {isLoading ? (
-              <ActivityIndicator
-                size="large"
-                color={colors.accentCyan}
-                style={{ marginTop: 40 }}
-              />
+              <ActivityIndicator size="large" color={colors.accentCyan} style={{ marginTop: 40 }} />
             ) : (
               <FlatList
                 data={filteredFunds}
@@ -121,9 +133,7 @@ export default function FundSelector({ selectedFundId, onSelect }) {
                       styles.fundOption,
                       {
                         backgroundColor:
-                          item.id === selectedFundId
-                            ? colors.surfaceActive
-                            : 'transparent',
+                          item.id === selectedFundId ? `${colors.accentCyan}12` : 'transparent',
                         borderBottomColor: colors.borderSubtle,
                       },
                     ]}
@@ -131,7 +141,12 @@ export default function FundSelector({ selectedFundId, onSelect }) {
                   >
                     <View style={styles.fundInfo}>
                       <Text
-                        style={[styles.optionName, { color: colors.textPrimary }]}
+                        style={[
+                          styles.optionName,
+                          {
+                            color: item.id === selectedFundId ? colors.accentCyan : colors.textPrimary,
+                          },
+                        ]}
                         numberOfLines={2}
                       >
                         {item.scheme_name}
@@ -142,15 +157,11 @@ export default function FundSelector({ selectedFundId, onSelect }) {
                         </Text>
                       )}
                     </View>
-                    {item.id === selectedFundId && (
-                      <Check size={18} color={colors.accentCyan} />
-                    )}
+                    {item.id === selectedFundId && <Check size={18} color={colors.accentCyan} />}
                   </TouchableOpacity>
                 )}
                 ListEmptyComponent={
-                  <Text style={[styles.emptyText, { color: colors.textMuted }]}>
-                    No funds found
-                  </Text>
+                  <Text style={[styles.emptyText, { color: colors.textMuted }]}>No funds found</Text>
                 }
                 style={styles.list}
               />
@@ -166,31 +177,81 @@ const styles = StyleSheet.create({
   wrapper: {
     marginVertical: spacing.md,
   },
-  selector: {
+
+  // Label
+  labelRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    borderWidth: 1,
-    borderRadius: radii.md,
+    justifyContent: 'center',
+    gap: 6,
+    marginBottom: spacing.md,
+  },
+  labelText: {
+    fontSize: fontSizes.xs,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+
+  // Search bar (no selection)
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    borderWidth: 1.5,
+    borderRadius: 9999,
+    paddingHorizontal: spacing.lg,
+    minHeight: 52,
+  },
+  searchPlaceholder: {
+    flex: 1,
+    fontSize: fontSizes.base,
+  },
+  divider: {
+    width: 1,
+    height: 24,
+  },
+
+  // Selected fund chip
+  chipBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    borderWidth: 1.5,
+    borderRadius: 9999,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
     minHeight: 52,
+    backgroundColor: 'rgba(6, 182, 212, 0.04)',
   },
-  selectorContent: {
+  chipDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
+  chipTextWrap: {
     flex: 1,
-    marginRight: spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
   },
-  fundName: {
+  chipName: {
     fontSize: fontSizes.base,
     fontWeight: '600',
+    flex: 1,
   },
-  fundCode: {
+  chipCodeBadge: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+    borderRadius: 9999,
+  },
+  chipCodeText: {
     fontSize: fontSizes.xs,
-    marginTop: 2,
+    fontWeight: '600',
+    letterSpacing: 0.3,
   },
-  placeholder: {
-    fontSize: fontSizes.base,
-  },
+
+  // Modal
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
@@ -242,7 +303,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: spacing.md,
+    paddingHorizontal: spacing.sm,
     borderBottomWidth: 1,
+    borderRadius: radii.md,
   },
   fundInfo: {
     flex: 1,

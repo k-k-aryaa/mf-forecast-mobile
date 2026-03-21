@@ -1,111 +1,97 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Image, StyleSheet } from 'react-native';
+import React, { useRef } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { useTheme } from '../context/ThemeContext';
+import { Brain, HelpCircle, Clock, Timer, Search, LayoutDashboard, Sparkles } from 'lucide-react-native';
 import { useColors, spacing, radii, fontSizes } from '../theme';
 import Header from '../components/Header';
-import MarketTicker from '../components/MarketTicker';
 import FundSelector from '../components/FundSelector';
-import EstimateCard from '../components/EstimateCard';
-import NavChart from '../components/NavChart';
-import Attribution from '../components/Attribution';
-import TruthLens from '../components/TruthLens';
-import Favorites from '../components/Favorites';
 
 export default function DashboardScreen() {
-  const [selectedFundId, setSelectedFundId] = useState(null);
-  const [activeView, setActiveView] = useState('dashboard');
-  const { isDark } = useTheme();
   const colors = useColors();
   const navigation = useNavigation();
+  const scrollRef = useRef(null);
 
-  const rocketDark = require('../assets/rocket.png');
-  const rocketLight = require('../assets/rocket_light.png');
+  const handleFundSelect = (fundId) => {
+    if (fundId) {
+      navigation.navigate('FundDetail', { fundId });
+    }
+  };
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.bgPrimary }]} edges={['top']}>
       <Header />
       <ScrollView
+        ref={scrollRef}
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <MarketTicker />
-
-        {/* View Tabs */}
-        <View style={[styles.tabRow, { borderBottomColor: colors.borderSubtle }]}>
-          <TouchableOpacity
-            style={[
-              styles.tab,
-              activeView === 'dashboard' && [styles.tabActive, { borderBottomColor: colors.accentCyan }],
-            ]}
-            onPress={() => setActiveView('dashboard')}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                { color: activeView === 'dashboard' ? colors.accentCyan : colors.textMuted },
-              ]}
-            >
-              Dashboard
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.tab,
-              activeView === 'favorites' && [styles.tabActive, { borderBottomColor: colors.accentCyan }],
-            ]}
-            onPress={() => setActiveView('favorites')}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                { color: activeView === 'favorites' ? colors.accentCyan : colors.textMuted },
-              ]}
-            >
-              Favorites
-            </Text>
-          </TouchableOpacity>
-        </View>
-
         <View style={styles.content}>
-          {activeView === 'dashboard' ? (
-            <>
-              <FundSelector selectedFundId={selectedFundId} onSelect={setSelectedFundId} />
+          {/* Hero Section */}
+          <View style={styles.heroSection}>
+            <Text style={[styles.heroTitle, { color: colors.accentCyan }]}>
+              See Your Mutual Fund Move — Live.
+            </Text>
+            <Text style={[styles.heroSubtitle, { color: colors.textSecondary }]}>
+              The only platform that gives you{' '}
+              <Text style={{ color: colors.accentCyan, fontWeight: '700' }}>real-time AI-estimated NAVs</Text>
+              {' '}for mutual funds during market hours.
+            </Text>
+          </View>
 
-              {selectedFundId ? (
-                <View style={styles.grid}>
-                  <EstimateCard fundId={selectedFundId} />
-                  <NavChart fundId={selectedFundId} />
-                  <Attribution fundId={selectedFundId} />
-                  <TruthLens fundId={selectedFundId} />
-                </View>
-              ) : (
-                <View style={styles.emptyState}>
-                  <Image
-                    source={isDark ? rocketDark : rocketLight}
-                    style={styles.emptyImage}
-                    resizeMode="contain"
-                  />
-                  <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>
-                    Select a Fund to Begin
-                  </Text>
-                  <Text style={[styles.emptyDesc, { color: colors.textMuted }]}>
-                    Choose a mutual fund from the dropdown above to view real-time performance estimates.
-                  </Text>
-                </View>
-              )}
-            </>
-          ) : (
-            <Favorites
-              onFundSelect={(id) => {
-                setSelectedFundId(id);
-                setActiveView('dashboard');
-              }}
-              onLogin={() => navigation.navigate('LoginScreen')}
-            />
-          )}
+          {/* Fund Selector */}
+          <FundSelector selectedFundId={null} onSelect={handleFundSelect} />
+
+          {/* Problem Section */}
+          <View style={[styles.problemSection, { borderColor: 'rgba(239, 68, 68, 0.15)' }]}>
+            <HelpCircle size={28} color="#f59e0b" />
+            <Text style={[styles.sectionTitle, { color: '#fbbf24' }]}>The Problem: You're Flying Blind</Text>
+            <Text style={[styles.sectionText, { color: colors.textSecondary }]}>
+              With stocks and ETFs, you can watch prices change every second. But with{' '}
+              <Text style={{ color: colors.textPrimary, fontWeight: '600' }}>mutual funds</Text>? You invest your money and then… wait.
+            </Text>
+            <View style={[styles.highlightBox, { borderLeftColor: colors.accentRed, backgroundColor: 'rgba(239, 68, 68, 0.06)' }]}>
+              <Clock size={16} color={colors.accentRed} />
+              <Text style={[styles.highlightText, { color: colors.textSecondary }]}>
+                Official NAVs are published only <Text style={{ color: colors.textPrimary, fontWeight: '600' }}>once a day, after 9 PM</Text> — during the trading day, you have zero visibility.
+              </Text>
+            </View>
+            <Text style={[styles.sectionText, { color: colors.textSecondary, marginTop: spacing.sm }]}>
+              Is your fund up 2% or down 1%? You don't know until the day is over.{' '}
+              <Text style={{ color: colors.accentCyan, fontWeight: '700' }}>That changes now.</Text>
+            </Text>
+          </View>
+
+          {/* Why MF Forecast */}
+          <Text style={[styles.whyHeading, { color: colors.textPrimary }]}>Why MF Forecast?</Text>
+          {[
+            { icon: Timer, text: 'Traditional platforms show NAV once a day. We estimate it every minute.', color: colors.accentCyan },
+            { icon: Brain, text: 'Powered by AI models trained on real historical data.', color: colors.accentPurple },
+            { icon: Search, text: 'Full transparency — past accuracy as proof, not promises.', color: '#10b981' },
+            { icon: LayoutDashboard, text: 'Deep portfolio insights with heatmaps and attribution.', color: '#fbbf24' },
+          ].map((item, i) => (
+            <View key={i} style={styles.whyRow}>
+              <View style={[styles.whyIconWrap, { backgroundColor: `${item.color}1A` }]}>
+                <item.icon size={18} color={item.color} />
+              </View>
+              <Text style={[styles.whyText, { color: colors.textSecondary }]}>{item.text}</Text>
+            </View>
+          ))}
+
+          {/* CTA */}
+          <TouchableOpacity 
+            style={styles.ctaSection}
+            onPress={() => scrollRef.current?.scrollTo({ y: 0, animated: true })}
+            activeOpacity={0.7}
+          >
+            <Text style={[styles.ctaText, { color: colors.textMuted }]}>
+              Ready to see your fund's real-time performance?
+            </Text>
+            <Text style={[styles.ctaHint, { color: colors.accentCyan }]}>
+              🚀 Select a Fund Above to Get Started
+            </Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -113,60 +99,107 @@ export default function DashboardScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-  },
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: 100,
-  },
-  tabRow: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    paddingHorizontal: spacing.lg,
-    marginTop: spacing.sm,
-  },
-  tab: {
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    borderBottomWidth: 2,
-    borderBottomColor: 'transparent',
-  },
-  tabActive: {
-    borderBottomWidth: 2,
-  },
-  tabText: {
-    fontSize: fontSizes.base,
-    fontWeight: '600',
-  },
+  safe: { flex: 1 },
+  scroll: { flex: 1 },
+  scrollContent: { paddingBottom: 100 },
   content: {
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
   },
-  grid: {
-    gap: spacing.lg,
-  },
-  emptyState: {
+
+  // Hero
+  heroSection: {
     alignItems: 'center',
-    paddingVertical: spacing['4xl'],
-    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing['2xl'],
   },
-  emptyImage: {
-    width: 180,
-    height: 180,
-    marginBottom: spacing.lg,
-  },
-  emptyTitle: {
+  heroTitle: {
     fontSize: fontSizes['2xl'],
-    fontWeight: '700',
+    fontWeight: '800',
     textAlign: 'center',
     marginBottom: spacing.sm,
+    letterSpacing: -0.5,
   },
-  emptyDesc: {
+  heroSubtitle: {
     fontSize: fontSizes.base,
-    textAlign: 'center',
     lineHeight: 22,
+    textAlign: 'center',
+    maxWidth: 340,
+  },
+
+  // Problem
+  problemSection: {
+    borderWidth: 1,
+    borderRadius: radii.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.xl,
+    backgroundColor: 'rgba(239, 68, 68, 0.03)',
+  },
+  sectionTitle: {
+    fontSize: fontSizes.lg,
+    fontWeight: '700',
+    marginTop: spacing.md,
+    marginBottom: spacing.sm,
+  },
+  sectionText: {
+    fontSize: fontSizes.sm,
+    lineHeight: 20,
+    marginBottom: spacing.sm,
+  },
+  highlightBox: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.sm,
+    padding: spacing.md,
+    borderLeftWidth: 3,
+    borderRadius: radii.sm,
+    marginTop: spacing.sm,
+  },
+  highlightText: {
+    fontSize: fontSizes.sm,
+    lineHeight: 20,
+    flex: 1,
+  },
+
+  // Why section
+  whyHeading: {
+    fontSize: fontSizes.lg,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: spacing.lg,
+  },
+  whyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    marginBottom: spacing.md,
+  },
+  whyIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  whyText: {
+    fontSize: fontSizes.sm,
+    flex: 1,
+    lineHeight: 18,
+  },
+
+  // CTA
+  ctaSection: {
+    alignItems: 'center',
+    paddingVertical: spacing['2xl'],
+  },
+  ctaText: {
+    fontSize: fontSizes.sm,
+    marginBottom: spacing.md,
+    textAlign: 'center',
+  },
+  ctaHint: {
+    fontSize: fontSizes.base,
+    fontWeight: '700',
+    textAlign: 'center',
   },
 });

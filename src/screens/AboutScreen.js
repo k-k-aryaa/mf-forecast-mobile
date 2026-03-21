@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { Zap, Brain, BarChart3, ShieldCheck, TrendingUp, Eye, ExternalLink, HelpCircle, Target, Clock, Timer, Search, LayoutDashboard, Code2, AlertTriangle } from 'lucide-react-native';
+import { Zap, Brain, BarChart3, ShieldCheck, TrendingUp, Eye, Target, Code2, AlertTriangle } from 'lucide-react-native';
 import * as Linking from 'expo-linking';
 import { useColors, spacing, radii, fontSizes } from '../theme';
 import Header from '../components/Header';
@@ -19,35 +19,17 @@ export default function AboutScreen() {
 
           {/* Hero */}
           <Text style={[styles.intro, { color: colors.textSecondary }]}>
-            The only platform that gives you{' '}
-            <Text style={{ color: colors.accentCyan, fontWeight: '700' }}>real-time AI-estimated NAVs</Text>
-            {' '}for mutual funds during market hours.
+            Transparent, AI-powered mutual fund NAV estimates — built with accuracy you can verify.
           </Text>
 
-          {/* The Problem */}
-          <View style={[styles.problemSection, { borderColor: 'rgba(239, 68, 68, 0.15)' }]}>
-            <HelpCircle size={28} color="#f59e0b" />
-            <Text style={[styles.sectionTitle, { color: '#fbbf24' }]}>The Problem: You're Flying Blind</Text>
-            <Text style={[styles.sectionText, { color: colors.textSecondary }]}>
-              With stocks and ETFs, you can watch prices change every second. But with{' '}
-              <Text style={{ color: colors.textPrimary, fontWeight: '600' }}>mutual funds</Text>? You invest your money and then… wait.
-            </Text>
-            <View style={[styles.highlightBox, { borderLeftColor: colors.accentRed, backgroundColor: 'rgba(239, 68, 68, 0.06)' }]}>
-              <Clock size={16} color={colors.accentRed} />
-              <Text style={[styles.highlightText, { color: colors.textSecondary }]}>
-                Official NAVs are published only <Text style={{ color: colors.textPrimary, fontWeight: '600' }}>once a day, after 9 PM</Text> — during the trading day, you have zero visibility.
-              </Text>
+          {/* How It Works (combined Solution + Features) */}
+          <View style={[styles.howSection, { borderColor: 'rgba(6, 182, 212, 0.15)' }]}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: spacing.sm }}>
+              <View style={[styles.sectionIconWrap, { backgroundColor: 'rgba(6, 182, 212, 0.15)' }]}>
+                <Brain size={24} color={colors.accentCyan} />
+              </View>
+              <Text style={[styles.sectionTitle, { color: colors.accentCyan, marginTop: 0, marginBottom: 0 }]}>How It Works</Text>
             </View>
-            <Text style={[styles.sectionText, { color: colors.textSecondary, marginTop: spacing.sm }]}>
-              Is your fund up 2% or down 1%? You don't know until the day is over.{' '}
-              <Text style={{ color: colors.accentCyan, fontWeight: '700' }}>That changes now.</Text>
-            </Text>
-          </View>
-
-          {/* The Solution */}
-          <View style={[styles.solutionSection, { borderColor: 'rgba(6, 182, 212, 0.15)' }]}>
-            <Brain size={30} color={colors.accentCyan} />
-            <Text style={[styles.sectionTitle, { color: colors.accentCyan }]}>Our Solution: AI That Watches For You</Text>
             <Text style={[styles.sectionText, { color: colors.textSecondary }]}>
               We analyze the <Text style={{ color: colors.textPrimary, fontWeight: '600' }}>live stock prices</Text> of every holding inside your mutual fund and use <Text style={{ color: colors.textPrimary, fontWeight: '600' }}>AI models</Text> to calculate the estimated NAV in real-time.
             </Text>
@@ -63,12 +45,36 @@ export default function AboutScreen() {
                 <Text style={[styles.stepText, { color: colors.textSecondary }]}>{text}</Text>
               </View>
             ))}
+
+            {/* Feature cards inside How It Works */}
+            <View style={styles.featuresWrap}>
+              {[
+                { icon: Zap, title: 'Live NAV Estimates', desc: "See your fund's estimated NAV updating in real-time throughout the trading day.", color: colors.accentCyan },
+                { icon: BarChart3, title: 'Portfolio Heatmap', desc: 'See sector-wise and stock-wise attribution — know exactly which holdings are driving returns.', color: colors.accentGreen },
+                { icon: TrendingUp, title: 'NAV History Charts', desc: "Track how your fund's NAV has moved over time with interactive charts.", color: colors.accentPurple },
+                { icon: ShieldCheck, title: 'Prediction Accuracy', desc: "Every day, we show yesterday's prediction vs. actual NAV — judge our accuracy yourself.", color: '#fbbf24' },
+              ].map((f, i) => (
+                <View key={i} style={[styles.featureCard, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
+                  <View style={[styles.iconCircle, { backgroundColor: `${f.color}22` }]}>
+                    <f.icon size={22} color={f.color} />
+                  </View>
+                  <View style={styles.featureTextWrap}>
+                    <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{f.title}</Text>
+                    <Text style={[styles.featureDesc, { color: colors.textMuted }]}>{f.desc}</Text>
+                  </View>
+                </View>
+              ))}
+            </View>
           </View>
 
           {/* Built on Transparency */}
           <View style={[styles.trustSection, { borderColor: 'rgba(16, 185, 129, 0.15)' }]}>
-            <Eye size={26} color="#10b981" />
-            <Text style={[styles.sectionTitle, { color: '#10b981' }]}>Built on Transparency</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: spacing.sm }}>
+              <View style={[styles.sectionIconWrap, { backgroundColor: 'rgba(16, 185, 129, 0.15)' }]}>
+                <Eye size={24} color="#10b981" />
+              </View>
+              <Text style={[styles.sectionTitle, { color: '#10b981', marginTop: 0, marginBottom: 0 }]}>Built on Transparency</Text>
+            </View>
             <Text style={[styles.sectionText, { color: colors.textSecondary }]}>
               We built <Text style={{ color: colors.textPrimary, fontWeight: '600' }}>TruthLens</Text> — our transparency engine that compares yesterday's predictions against the actual official NAVs published by AMCs.
             </Text>
@@ -80,42 +86,7 @@ export default function AboutScreen() {
             </View>
           </View>
 
-          {/* Features */}
-          <Text style={[styles.featureHeading, { color: colors.textPrimary }]}>What You Get</Text>
-          {[
-            { icon: Zap, title: 'Live NAV Estimates', desc: "See your fund's estimated NAV and daily change % updating in real-time throughout the trading day.", color: colors.accentCyan },
-            { icon: BarChart3, title: 'Portfolio Heatmap', desc: 'See sector-wise and stock-wise attribution — know exactly which holdings are driving returns.', color: colors.accentGreen },
-            { icon: TrendingUp, title: 'NAV History Charts', desc: "Track how your fund's NAV has moved over time with interactive charts.", color: colors.accentPurple },
-            { icon: ShieldCheck, title: 'Prediction Accuracy Proof', desc: "Every day, we show yesterday's prediction vs. actual NAV — judge our accuracy yourself.", color: '#fbbf24' },
-          ].map((f, i) => (
-            <View key={i} style={[styles.featureCard, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
-              <View style={[styles.iconCircle, { backgroundColor: `${f.color}22` }]}>
-                <f.icon size={22} color={f.color} />
-              </View>
-              <View style={styles.featureTextWrap}>
-                <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{f.title}</Text>
-                <Text style={[styles.featureDesc, { color: colors.textMuted }]}>{f.desc}</Text>
-              </View>
-            </View>
-          ))}
-
-          {/* Why MF Forecast */}
-          <Text style={[styles.featureHeading, { color: colors.textPrimary, marginTop: spacing['2xl'] }]}>Why MF Forecast?</Text>
-          {[
-            { icon: Timer, text: 'Traditional platforms show NAV once a day. We estimate it every second.', color: colors.accentCyan },
-            { icon: Brain, text: 'Powered by AI models trained on real historical data.', color: colors.accentPurple },
-            { icon: Search, text: 'Full transparency — past accuracy as proof, not promises.', color: '#10b981' },
-            { icon: LayoutDashboard, text: 'Deep portfolio insights with heatmaps and attribution.', color: '#fbbf24' },
-          ].map((item, i) => (
-            <View key={i} style={styles.whyRow}>
-              <View style={[styles.whyIconWrap, { backgroundColor: `${item.color}1A` }]}>
-                <item.icon size={18} color={item.color} />
-              </View>
-              <Text style={[styles.whyText, { color: colors.textSecondary }]}>{item.text}</Text>
-            </View>
-          ))}
-
-          {/* Redesigned Disclaimer Banner (Now above Dev section) */}
+          {/* Disclaimer Banner */}
           <TouchableOpacity
             onPress={() => navigation.navigate('Disclaimer')}
             style={[styles.disclaimerBanner, { backgroundColor: `${colors.accentRed}12`, borderColor: `${colors.accentRed}40` }]}
@@ -158,36 +129,15 @@ const styles = StyleSheet.create({
     borderRadius: radii.xl,
     padding: spacing['2xl'],
   },
-  heroTitle: {
-    fontSize: fontSizes['2xl'],
-    fontWeight: '800',
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-    letterSpacing: -0.5,
-  },
   intro: { fontSize: fontSizes.base, lineHeight: 22, textAlign: 'center', marginBottom: spacing['2xl'] },
 
-  // Problem section
-  problemSection: {
-    borderWidth: 1,
-    borderRadius: radii.lg,
-    padding: spacing.lg,
-    marginBottom: spacing.xl,
-    backgroundColor: 'rgba(239, 68, 68, 0.03)',
-  },
-  solutionSection: {
+  // How It Works (combined)
+  howSection: {
     borderWidth: 1,
     borderRadius: radii.lg,
     padding: spacing.lg,
     marginBottom: spacing.xl,
     backgroundColor: 'rgba(6, 182, 212, 0.03)',
-  },
-  trustSection: {
-    borderWidth: 1,
-    borderRadius: radii.lg,
-    padding: spacing.lg,
-    marginBottom: spacing['2xl'],
-    backgroundColor: 'rgba(16, 185, 129, 0.03)',
   },
   sectionTitle: {
     fontSize: fontSizes.lg,
@@ -199,20 +149,6 @@ const styles = StyleSheet.create({
     fontSize: fontSizes.sm,
     lineHeight: 20,
     marginBottom: spacing.sm,
-  },
-  highlightBox: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: spacing.sm,
-    padding: spacing.md,
-    borderLeftWidth: 3,
-    borderRadius: radii.sm,
-    marginTop: spacing.sm,
-  },
-  highlightText: {
-    fontSize: fontSizes.sm,
-    lineHeight: 20,
-    flex: 1,
   },
 
   // Steps
@@ -243,17 +179,13 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
 
-  // Features
-  featureHeading: {
-    fontSize: fontSizes.lg,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: spacing.lg,
+  // Features inside How It Works
+  featuresWrap: {
+    marginTop: spacing.xl,
   },
   featureCard: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center', /* Changed from flex-start to center properly vertically */
     gap: spacing.md,
     padding: spacing.lg,
     borderWidth: 1,
@@ -261,9 +193,17 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   iconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44, /* Slightly larger to comfortably fit 22px icon */
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden', /* Added to ensure background doesn't bleed */
+  },
+  sectionIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -271,29 +211,47 @@ const styles = StyleSheet.create({
   featureTitle: { fontSize: fontSizes.base, fontWeight: '700', marginBottom: spacing.xs },
   featureDesc: { fontSize: fontSizes.sm, lineHeight: 18 },
 
-  // Why section
-  whyRow: {
+  // Trust section
+  trustSection: {
+    borderWidth: 1,
+    borderRadius: radii.lg,
+    padding: spacing.lg,
+    marginBottom: spacing['2xl'],
+    backgroundColor: 'rgba(16, 185, 129, 0.03)',
+  },
+  highlightBox: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.sm,
+    padding: spacing.md,
+    borderLeftWidth: 3,
+    borderRadius: radii.sm,
+    marginTop: spacing.sm,
+  },
+  highlightText: {
+    fontSize: fontSizes.sm,
+    lineHeight: 20,
+    flex: 1,
+  },
+
+  // Disclaimer banner
+  disclaimerBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
-    marginBottom: spacing.md,
+    padding: spacing.lg,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    marginBottom: spacing.xl,
+    borderStyle: 'dashed',
   },
-  whyIconWrap: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  whyText: {
-    fontSize: fontSizes.sm,
-    flex: 1,
-    lineHeight: 18,
-  },
+  disclaimerBannerTextWrap: { flex: 1 },
+  disclaimerBannerTitle: { fontSize: fontSizes.sm, fontWeight: '700', marginBottom: 2 },
+  disclaimerBannerSubtitle: { fontSize: fontSizes.xs, lineHeight: 16 },
 
   // Developer
   devSection: {
-    marginTop: spacing['2xl'],
+    marginTop: spacing.lg,
     paddingTop: spacing['2xl'],
     borderTopWidth: 1,
     alignItems: 'center',
@@ -310,29 +268,4 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
   },
   devLinkText: { fontSize: fontSizes.sm, fontWeight: '600' },
-
-  // Disclaimer banner
-  disclaimerBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    padding: spacing.lg,
-    borderRadius: radii.lg,
-    borderWidth: 1,
-    marginTop: spacing.xl,
-    marginBottom: spacing.xl,
-    borderStyle: 'dashed',
-  },
-  disclaimerBannerTextWrap: {
-    flex: 1,
-  },
-  disclaimerBannerTitle: {
-    fontSize: fontSizes.sm,
-    fontWeight: '700',
-    marginBottom: 2,
-  },
-  disclaimerBannerSubtitle: {
-    fontSize: fontSizes.xs,
-    lineHeight: 16,
-  },
 });

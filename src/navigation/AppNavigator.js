@@ -2,13 +2,15 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { Home, Wrench, Info } from 'lucide-react-native';
+import { Home, Heart, Wrench, Info } from 'lucide-react-native';
 import { useColors } from '../theme';
 
 import DashboardScreen from '../screens/DashboardScreen';
+import FavoritesScreen from '../screens/FavoritesScreen';
 import LoginScreen from '../screens/LoginScreen';
 import AboutScreen from '../screens/AboutScreen';
 import ToolkitScreen from '../screens/ToolkitScreen';
+import FundDetailScreen from '../screens/FundDetailScreen';
 import AllIndicesScreen from '../screens/AllIndicesScreen';
 import IndexDetailScreen from '../screens/IndexDetailScreen';
 import DisclaimerScreen from '../screens/DisclaimerScreen';
@@ -47,6 +49,13 @@ function MainTabs() {
         }}
       />
       <Tab.Screen
+        name="Favorites"
+        component={FavoritesScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => <Heart size={size} color={color} />,
+        }}
+      />
+      <Tab.Screen
         name="Toolkit"
         component={ToolkitScreen}
         options={{
@@ -77,6 +86,7 @@ export default function AppNavigator() {
         }}
       >
         <Stack.Screen name="Main" component={MainTabs} />
+        <Stack.Screen name="FundDetail" component={FundDetailScreen} />
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen name="AllIndices" component={AllIndicesScreen} />
         <Stack.Screen name="IndexDetail" component={IndexDetailScreen} />
