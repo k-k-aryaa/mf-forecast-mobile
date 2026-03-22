@@ -5,7 +5,7 @@ import { useColors, spacing, radii, fontSizes } from '../theme';
 const MESSAGES = [
   'AI Engine Analyzing Live Ticks...',
   'Processing Market Data Streams...',
-  'Aggregating 45 Underlying Assets...',
+  'Aggregating  Underlying Assets...',
   'Computing Real-Time Correlations...',
   'Neural Network Processing...',
   'Calibrating Prediction Model...',
