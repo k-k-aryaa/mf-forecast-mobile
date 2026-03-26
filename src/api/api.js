@@ -117,6 +117,9 @@ export const api = {
 
   // Health
   getHealth: () => request('/admin/health'),
+
+  // Account
+  deleteAccount: () => request('/auth/me', { method: 'DELETE' }),
 };
 
 export default api;

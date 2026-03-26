@@ -1,15 +1,43 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { Zap, Brain, BarChart3, ShieldCheck, TrendingUp, Eye, Target, Code2, AlertTriangle } from 'lucide-react-native';
+import { Zap, Brain, BarChart3, ShieldCheck, TrendingUp, Eye, Target, Code2, AlertTriangle, Trash2 } from 'lucide-react-native';
 import * as Linking from 'expo-linking';
 import { useColors, spacing, radii, fontSizes } from '../theme';
 import Header from '../components/Header';
+import { useAuth } from '../context/AuthContext';
+import api from '../api/api';
 
 export default function AboutScreen() {
   const colors = useColors();
   const navigation = useNavigation();
+  const { user, logout } = useAuth();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      "Delete Account",
+      "Are you absolutely sure you want to permanently delete your account and all associated data? This action cannot be undone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        { 
+          text: "Delete", 
+          style: "destructive",
+          onPress: async () => {
+            try {
+              setIsDeleting(true);
+              await api.deleteAccount();
+              logout();
+            } catch (e) {
+              Alert.alert("Error", "Failed to delete account. Please try again later.");
+              setIsDeleting(false);
+            }
+          }
+        }
+      ]
+    );
+  };
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.bgPrimary }]} edges={['top']}>
@@ -114,6 +142,30 @@ export default function AboutScreen() {
               <Text style={[styles.devLinkText, { color: colors.accentPurple }]}>Developer Portfolio</Text>
             </TouchableOpacity>
           </View>
+
+          {/* Account Management Section (Only visible if logged in) */}
+          {user && (
+            <View style={[styles.accountSection, { borderTopColor: colors.borderSubtle }]}>
+              <Text style={[styles.devTitle, { color: colors.accentRed }]}>Account Management</Text>
+              <Text style={[styles.devDesc, { color: colors.textSecondary }]}>
+                Permanently delete your account and all saved favorites.
+              </Text>
+              <TouchableOpacity
+                onPress={handleDeleteAccount}
+                disabled={isDeleting}
+                style={[styles.deleteLink, { borderColor: colors.accentRed, backgroundColor: `${colors.accentRed}15` }]}
+              >
+                {isDeleting ? (
+                  <ActivityIndicator size="small" color={colors.accentRed} />
+                ) : (
+                  <>
+                    <Trash2 size={16} color={colors.accentRed} />
+                    <Text style={[styles.devLinkText, { color: colors.accentRed }]}>Delete My Account</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
+          )}
 
         </View>
       </ScrollView>
@@ -268,4 +320,23 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
   },
   devLinkText: { fontSize: fontSizes.sm, fontWeight: '600' },
+  
+  // Account
+  accountSection: {
+    marginTop: spacing.lg,
+    paddingTop: spacing['2xl'],
+    borderTopWidth: 1,
+    alignItems: 'center',
+  },
+  deleteLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    borderWidth: 1,
+    borderRadius: radii.md,
+    minWidth: 200,
+  },
 });
