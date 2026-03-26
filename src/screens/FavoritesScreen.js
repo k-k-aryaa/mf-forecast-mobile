@@ -2,13 +2,14 @@ import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { useColors, spacing } from '../theme';
+import { useColors, spacing, useResponsive } from '../theme';
 import Header from '../components/Header';
 import Favorites from '../components/Favorites';
 
 export default function FavoritesScreen() {
   const colors = useColors();
   const navigation = useNavigation();
+  const { maxContentWidth } = useResponsive();
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.bgPrimary }]} edges={['top']}>
@@ -18,7 +19,7 @@ export default function FavoritesScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.content}>
+        <View style={[styles.content, maxContentWidth]}>
           <Favorites
             onFundSelect={(id) => navigation.navigate('FundDetail', { fundId: id })}
             onLogin={() => navigation.navigate('LoginScreen')}
@@ -38,3 +39,4 @@ const styles = StyleSheet.create({
     paddingTop: spacing.md,
   },
 });
+

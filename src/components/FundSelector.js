@@ -12,12 +12,13 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { Search, ChevronDown, Check, Sparkles } from 'lucide-react-native';
 import api from '../api/api';
-import { useColors, spacing, radii, fontSizes } from '../theme';
+import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
 
 export default function FundSelector({ selectedFundId, onSelect }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const colors = useColors();
+  const { isTablet, scale } = useResponsive();
 
   const { data: funds, isLoading } = useQuery({
     queryKey: ['funds'],
@@ -95,6 +96,7 @@ export default function FundSelector({ selectedFundId, onSelect }) {
             style={[
               styles.modalContent,
               { backgroundColor: colors.bgElevated, borderColor: colors.borderPrimary },
+              isTablet && styles.modalContentTablet,
             ]}
           >
             <View style={styles.modalHeader}>
@@ -264,6 +266,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
     maxHeight: '80%',
     paddingTop: spacing.lg,
+  },
+  modalContentTablet: {
+    maxWidth: 600,
+    alignSelf: 'center',
+    width: '100%',
+    borderBottomLeftRadius: radii.xl,
+    borderBottomRightRadius: radii.xl,
+    borderBottomWidth: 1,
+    maxHeight: '70%',
   },
   modalHeader: {
     flexDirection: 'row',

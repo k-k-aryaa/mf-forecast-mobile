@@ -4,12 +4,13 @@ import { useQuery } from '@tanstack/react-query';
 import { Info } from 'lucide-react-native';
 import { useTheme } from '../context/ThemeContext';
 import api from '../api/api';
-import { useColors, spacing, radii, fontSizes } from '../theme';
+import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
 
 export default function TruthLens({ fundId }) {
   const { isDark } = useTheme();
   const colors = useColors();
   const [showInfo, setShowInfo] = useState(false);
+  const { scale } = useResponsive();
 
   const lensIcon = isDark
     ? require('../assets/lens.png')

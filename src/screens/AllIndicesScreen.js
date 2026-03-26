@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { ArrowLeft } from 'lucide-react-native';
 import api from '../api/api';
-import { useColors, spacing, radii, fontSizes } from '../theme';
+import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
 
 export default function AllIndicesScreen() {
   const [indices, setIndices] = useState([]);
@@ -19,6 +19,7 @@ export default function AllIndicesScreen() {
   const [error, setError] = useState(null);
   const colors = useColors();
   const navigation = useNavigation();
+  const { isTablet, scale, maxContentWidth } = useResponsive();
 
   useEffect(() => {
     const fetchIndices = async () => {
@@ -39,63 +40,67 @@ export default function AllIndicesScreen() {
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.bgPrimary }]} edges={['top']}>
       <View style={[styles.header, { borderBottomColor: colors.borderPrimary }]}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={[styles.backBtn, { backgroundColor: colors.surfaceHover }]}
-        >
-          <ArrowLeft size={18} color={colors.textSecondary} />
-          <Text style={[styles.backText, { color: colors.textSecondary }]}>Back</Text>
-        </TouchableOpacity>
+        <View style={maxContentWidth}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={[styles.backBtn, { backgroundColor: colors.surfaceHover }]}
+          >
+            <ArrowLeft size={scale(18)} color={colors.textSecondary} />
+            <Text style={[styles.backText, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>Back</Text>
+          </TouchableOpacity>
 
-        <View style={styles.titleSection}>
-          <View style={styles.titleRow}>
-            <View style={[styles.dotLive, { backgroundColor: colors.accentNeonGreen }]} />
-            <Text style={[styles.pageTitle, { color: colors.textPrimary }]}>All Market Indices</Text>
+          <View style={styles.titleSection}>
+            <View style={styles.titleRow}>
+              <View style={[styles.dotLive, { backgroundColor: colors.accentNeonGreen }]} />
+              <Text style={[styles.pageTitle, { color: colors.textPrimary, fontSize: scale(fontSizes.xl) }]}>All Market Indices</Text>
+            </View>
+            <Text style={[styles.pageSubtitle, { color: colors.textMuted, fontSize: scale(fontSizes.sm) }]}>
+              {indices.length} indices available • Real-time data
+            </Text>
           </View>
-          <Text style={[styles.pageSubtitle, { color: colors.textMuted }]}>
-            {indices.length} indices available • Real-time data
-          </Text>
         </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {loading ? (
-          <ActivityIndicator size="large" color={colors.accentCyan} style={{ marginTop: 40 }} />
-        ) : error ? (
-          <Text style={[styles.errorText, { color: colors.accentRed }]}>{error}</Text>
-        ) : (
-          <View style={styles.grid}>
-            {indices.map((index) => (
-              <TouchableOpacity
-                key={index.symbol}
-                style={[styles.card, { backgroundColor: colors.indexCardBg, borderColor: colors.borderSubtle }]}
-                onPress={() => navigation.navigate('IndexDetail', { symbol: index.symbol })}
-                activeOpacity={0.7}
-              >
-                <Text style={[styles.indexName, { color: colors.textSecondary }]} numberOfLines={1}>
-                  {index.name}
-                </Text>
-                <Text
-                  style={[
-                    styles.indexPrice,
-                    { color: index.change >= 0 ? colors.accentGreen : colors.accentRed },
-                  ]}
+        <View style={maxContentWidth}>
+          {loading ? (
+            <ActivityIndicator size="large" color={colors.accentCyan} style={{ marginTop: 40 }} />
+          ) : error ? (
+            <Text style={[styles.errorText, { color: colors.accentRed, fontSize: scale(fontSizes.base) }]}>{error}</Text>
+          ) : (
+            <View style={[styles.grid, isTablet && styles.gridTablet]}>
+              {indices.map((index) => (
+                <TouchableOpacity
+                  key={index.symbol}
+                  style={[styles.card, isTablet && styles.cardTablet, { backgroundColor: colors.indexCardBg, borderColor: colors.borderSubtle }]}
+                  onPress={() => navigation.navigate('IndexDetail', { symbol: index.symbol })}
+                  activeOpacity={0.7}
                 >
-                  {index.price?.toFixed(2) ?? '-'}
-                </Text>
-                <Text
-                  style={[
-                    styles.indexChange,
-                    { color: index.change >= 0 ? colors.accentGreen : colors.accentRed },
-                  ]}
-                >
-                  {index.change >= 0 ? '▲' : '▼'} {Math.abs(index.change ?? 0).toFixed(2)} (
-                  {Math.abs(index.change_pct ?? 0).toFixed(2)}%)
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
+                  <Text style={[styles.indexName, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]} numberOfLines={1}>
+                    {index.name}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.indexPrice,
+                      { color: index.change >= 0 ? colors.accentGreen : colors.accentRed, fontSize: scale(fontSizes.xl) },
+                    ]}
+                  >
+                    {index.price?.toFixed(2) ?? '-'}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.indexChange,
+                      { color: index.change >= 0 ? colors.accentGreen : colors.accentRed, fontSize: scale(fontSizes.sm) },
+                    ]}
+                  >
+                    {index.change >= 0 ? '▲' : '▼'} {Math.abs(index.change ?? 0).toFixed(2)} (
+                    {Math.abs(index.change_pct ?? 0).toFixed(2)}%)
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -150,10 +155,18 @@ const styles = StyleSheet.create({
   grid: {
     gap: spacing.md,
   },
+  gridTablet: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
   card: {
     borderWidth: 1,
     borderRadius: radii.md,
     padding: spacing.lg,
+  },
+  cardTablet: {
+    width: '48%',
+    marginRight: '2%',
   },
   indexName: {
     fontSize: fontSizes.sm,

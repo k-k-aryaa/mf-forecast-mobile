@@ -16,7 +16,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Mail, Lock, User, ArrowRight, AlertCircle, Home } from 'lucide-react-native';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { useColors, spacing, radii, fontSizes } from '../theme';
+import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
 
 export default function LoginScreen() {
   const [view, setView] = useState('LOGIN');
@@ -34,6 +34,7 @@ export default function LoginScreen() {
   const { isDark } = useTheme();
   const colors = useColors();
   const navigation = useNavigation();
+  const { isTablet, scale, maxContentWidth } = useResponsive();
 
   const logoDark = require('../assets/logo.png');
   const logoLight = require('../assets/logo_light.png');
@@ -117,214 +118,216 @@ export default function LoginScreen() {
           onPress={() => navigation.navigate('Main')}
           style={[styles.homeBtn, { backgroundColor: colors.surfaceHover, borderColor: colors.borderPrimary }]}
         >
-          <Home size={16} color={colors.textSecondary} />
-          <Text style={[styles.homeBtnText, { color: colors.textSecondary }]}>Home</Text>
+          <Home size={scale(16)} color={colors.textSecondary} />
+          <Text style={[styles.homeBtnText, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>Home</Text>
         </TouchableOpacity>
 
         <ScrollView
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={[styles.scrollContent, isTablet && { paddingHorizontal: spacing['3xl'] }]}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          {/* Branding */}
-          <View style={styles.branding}>
-            <Image
-              source={isDark ? logoDark : logoLight}
-              style={styles.brandLogo}
-              resizeMode="contain"
-            />
-            <Text style={[styles.brandTitle, { color: colors.accentCyan }]}>MF-Forecast</Text>
-            <Text style={[styles.brandTagline, { color: colors.textPrimary }]}>
-              Master Your Portfolio
-            </Text>
-            <Text style={[styles.brandDesc, { color: colors.textMuted }]}>
-              Get real-time NAV predictions and AI-powered insights for your mutual funds.
-            </Text>
+          <View style={maxContentWidth}>
+            {/* Branding */}
+            <View style={styles.branding}>
+              <Image
+                source={isDark ? logoDark : logoLight}
+                style={[styles.brandLogo, { width: scale(72), height: scale(72) }]}
+                resizeMode="contain"
+              />
+              <Text style={[styles.brandTitle, { color: colors.accentCyan, fontSize: scale(fontSizes['3xl']) }]}>MF-Forecast</Text>
+              <Text style={[styles.brandTagline, { color: colors.textPrimary, fontSize: scale(fontSizes.xl) }]}>
+                Master Your Portfolio
+              </Text>
+              <Text style={[styles.brandDesc, { color: colors.textMuted, fontSize: scale(fontSizes.sm) }]}>
+                Get real-time NAV predictions and AI-powered insights for your mutual funds.
+              </Text>
 
-            <View style={styles.statsRow}>
-              <View style={[styles.statCard, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
-                <Text style={[styles.statValue, { color: colors.accentCyan }]}>98%</Text>
-                <Text style={[styles.statLabel, { color: colors.textMuted }]}>Prediction Accuracy</Text>
-              </View>
-              <View style={[styles.statCard, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
-                <Text style={[styles.statValue, { color: colors.accentBlue }]}>Live</Text>
-                <Text style={[styles.statLabel, { color: colors.textMuted }]}>Market Updates</Text>
-              </View>
-            </View>
-          </View>
-
-          {/* Form Card */}
-          <View style={[styles.formCard, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}>
-            <Text style={[styles.formTitle, { color: colors.accentCyan }]}>{getTitle()}</Text>
-            <Text style={[styles.formSubtitle, { color: colors.textMuted }]}>{getSubtitle()}</Text>
-
-            {successMsg && (
-              <View style={[styles.successBanner, { backgroundColor: colors.accentNeonGreenDim }]}>
-                <AlertCircle size={14} color={colors.accentGreen} />
-                <Text style={[styles.successText, { color: colors.accentGreen }]}>{successMsg}</Text>
-              </View>
-            )}
-
-            {error && (
-              <View style={[styles.errorBanner, { backgroundColor: colors.accentRedDim }]}>
-                <AlertCircle size={14} color={colors.accentRed} />
-                <Text style={[styles.errorText, { color: colors.accentRed }]}>{error}</Text>
-              </View>
-            )}
-
-            {/* Email */}
-            <View style={styles.fieldGroup}>
-              <Text style={[styles.label, { color: colors.textSecondary }]}>Email</Text>
-              <View style={[styles.inputWrapper, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
-                <Mail size={16} color={colors.textMuted} />
-                <TextInput
-                  placeholder="name@example.com"
-                  placeholderTextColor={colors.textMuted}
-                  value={email}
-                  onChangeText={setEmail}
-                  style={[styles.input, { color: colors.textPrimary }]}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  editable={view !== 'FORGOT_OTP' && !(view === 'REGISTER' && registerStep === 'DETAILS')}
-                />
+              <View style={styles.statsRow}>
+                <View style={[styles.statCard, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
+                  <Text style={[styles.statValue, { color: colors.accentCyan, fontSize: scale(fontSizes.xl) }]}>98%</Text>
+                  <Text style={[styles.statLabel, { color: colors.textMuted, fontSize: scale(fontSizes.xs) }]}>Prediction Accuracy</Text>
+                </View>
+                <View style={[styles.statCard, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
+                  <Text style={[styles.statValue, { color: colors.accentBlue, fontSize: scale(fontSizes.xl) }]}>Live</Text>
+                  <Text style={[styles.statLabel, { color: colors.textMuted, fontSize: scale(fontSizes.xs) }]}>Market Updates</Text>
+                </View>
               </View>
             </View>
 
-            {/* Register Step 2 */}
-            {view === 'REGISTER' && registerStep === 'DETAILS' && (
-              <>
-                <View style={styles.fieldGroup}>
-                  <Text style={[styles.label, { color: colors.textSecondary }]}>Verification Code (OTP)</Text>
-                  <View style={[styles.inputWrapper, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
-                    <Lock size={16} color={colors.textMuted} />
-                    <TextInput
-                      placeholder="Enter 6-digit code"
-                      placeholderTextColor={colors.textMuted}
-                      value={otp}
-                      onChangeText={setOtp}
-                      style={[styles.input, { color: colors.textPrimary }]}
-                      keyboardType="number-pad"
-                      maxLength={6}
-                    />
-                  </View>
-                </View>
-                <View style={styles.fieldGroup}>
-                  <Text style={[styles.label, { color: colors.textSecondary }]}>Full Name</Text>
-                  <View style={[styles.inputWrapper, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
-                    <User size={16} color={colors.textMuted} />
-                    <TextInput
-                      placeholder="John Doe"
-                      placeholderTextColor={colors.textMuted}
-                      value={fullName}
-                      onChangeText={setFullName}
-                      style={[styles.input, { color: colors.textPrimary }]}
-                    />
-                  </View>
-                </View>
-              </>
-            )}
+            {/* Form Card */}
+            <View style={[styles.formCard, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary, padding: isTablet ? spacing['3xl'] : spacing['2xl'] }]}>
+              <Text style={[styles.formTitle, { color: colors.accentCyan, fontSize: scale(fontSizes['2xl']) }]}>{getTitle()}</Text>
+              <Text style={[styles.formSubtitle, { color: colors.textMuted, fontSize: scale(fontSizes.sm) }]}>{getSubtitle()}</Text>
 
-            {/* Forgot OTP fields */}
-            {view === 'FORGOT_OTP' && (
-              <>
-                <View style={styles.fieldGroup}>
-                  <Text style={[styles.label, { color: colors.textSecondary }]}>Reset OTP</Text>
-                  <View style={[styles.inputWrapper, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
-                    <Lock size={16} color={colors.textMuted} />
-                    <TextInput
-                      placeholder="Enter 6-digit code"
-                      placeholderTextColor={colors.textMuted}
-                      value={otp}
-                      onChangeText={setOtp}
-                      style={[styles.input, { color: colors.textPrimary }]}
-                      keyboardType="number-pad"
-                      maxLength={6}
-                    />
-                  </View>
+              {successMsg && (
+                <View style={[styles.successBanner, { backgroundColor: colors.accentNeonGreenDim }]}>
+                  <AlertCircle size={scale(14)} color={colors.accentGreen} />
+                  <Text style={[styles.successText, { color: colors.accentGreen, fontSize: scale(fontSizes.sm) }]}>{successMsg}</Text>
                 </View>
+              )}
+
+              {error && (
+                <View style={[styles.errorBanner, { backgroundColor: colors.accentRedDim }]}>
+                  <AlertCircle size={scale(14)} color={colors.accentRed} />
+                  <Text style={[styles.errorText, { color: colors.accentRed, fontSize: scale(fontSizes.sm) }]}>{error}</Text>
+                </View>
+              )}
+
+              {/* Email */}
+              <View style={styles.fieldGroup}>
+                <Text style={[styles.label, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>Email</Text>
+                <View style={[styles.inputWrapper, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
+                  <Mail size={scale(16)} color={colors.textMuted} />
+                  <TextInput
+                    placeholder="name@example.com"
+                    placeholderTextColor={colors.textMuted}
+                    value={email}
+                    onChangeText={setEmail}
+                    style={[styles.input, { color: colors.textPrimary, fontSize: scale(fontSizes.base), paddingVertical: isTablet ? spacing.lg : spacing.md }]}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    editable={view !== 'FORGOT_OTP' && !(view === 'REGISTER' && registerStep === 'DETAILS')}
+                  />
+                </View>
+              </View>
+
+              {/* Register Step 2 */}
+              {view === 'REGISTER' && registerStep === 'DETAILS' && (
+                <>
+                  <View style={styles.fieldGroup}>
+                    <Text style={[styles.label, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>Verification Code (OTP)</Text>
+                    <View style={[styles.inputWrapper, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
+                      <Lock size={scale(16)} color={colors.textMuted} />
+                      <TextInput
+                        placeholder="Enter 6-digit code"
+                        placeholderTextColor={colors.textMuted}
+                        value={otp}
+                        onChangeText={setOtp}
+                        style={[styles.input, { color: colors.textPrimary, fontSize: scale(fontSizes.base), paddingVertical: isTablet ? spacing.lg : spacing.md }]}
+                        keyboardType="number-pad"
+                        maxLength={6}
+                      />
+                    </View>
+                  </View>
+                  <View style={styles.fieldGroup}>
+                    <Text style={[styles.label, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>Full Name</Text>
+                    <View style={[styles.inputWrapper, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
+                      <User size={scale(16)} color={colors.textMuted} />
+                      <TextInput
+                        placeholder="John Doe"
+                        placeholderTextColor={colors.textMuted}
+                        value={fullName}
+                        onChangeText={setFullName}
+                        style={[styles.input, { color: colors.textPrimary, fontSize: scale(fontSizes.base), paddingVertical: isTablet ? spacing.lg : spacing.md }]}
+                      />
+                    </View>
+                  </View>
+                </>
+              )}
+
+              {/* Forgot OTP fields */}
+              {view === 'FORGOT_OTP' && (
+                <>
+                  <View style={styles.fieldGroup}>
+                    <Text style={[styles.label, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>Reset OTP</Text>
+                    <View style={[styles.inputWrapper, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
+                      <Lock size={scale(16)} color={colors.textMuted} />
+                      <TextInput
+                        placeholder="Enter 6-digit code"
+                        placeholderTextColor={colors.textMuted}
+                        value={otp}
+                        onChangeText={setOtp}
+                        style={[styles.input, { color: colors.textPrimary, fontSize: scale(fontSizes.base), paddingVertical: isTablet ? spacing.lg : spacing.md }]}
+                        keyboardType="number-pad"
+                        maxLength={6}
+                      />
+                    </View>
+                  </View>
+                  <View style={styles.fieldGroup}>
+                    <Text style={[styles.label, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>New Password</Text>
+                    <View style={[styles.inputWrapper, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
+                      <Lock size={scale(16)} color={colors.textMuted} />
+                      <TextInput
+                        placeholder="New Password"
+                        placeholderTextColor={colors.textMuted}
+                        value={newPassword}
+                        onChangeText={setNewPassword}
+                        style={[styles.input, { color: colors.textPrimary, fontSize: scale(fontSizes.base), paddingVertical: isTablet ? spacing.lg : spacing.md }]}
+                        secureTextEntry
+                      />
+                    </View>
+                  </View>
+                </>
+              )}
+
+              {/* Password */}
+              {(view === 'LOGIN' || (view === 'REGISTER' && registerStep === 'DETAILS')) && (
                 <View style={styles.fieldGroup}>
-                  <Text style={[styles.label, { color: colors.textSecondary }]}>New Password</Text>
+                  <Text style={[styles.label, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>Password</Text>
                   <View style={[styles.inputWrapper, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
-                    <Lock size={16} color={colors.textMuted} />
+                    <Lock size={scale(16)} color={colors.textMuted} />
                     <TextInput
-                      placeholder="New Password"
+                      placeholder="••••••••"
                       placeholderTextColor={colors.textMuted}
-                      value={newPassword}
-                      onChangeText={setNewPassword}
-                      style={[styles.input, { color: colors.textPrimary }]}
+                      value={password}
+                      onChangeText={setPassword}
+                      style={[styles.input, { color: colors.textPrimary, fontSize: scale(fontSizes.base), paddingVertical: isTablet ? spacing.lg : spacing.md }]}
                       secureTextEntry
                     />
                   </View>
+                  {view === 'LOGIN' && (
+                    <TouchableOpacity onPress={() => switchView('FORGOT_EMAIL')} style={styles.forgotLink}>
+                      <Text style={[styles.forgotText, { color: colors.textMuted, fontSize: scale(fontSizes.xs) }]}>Forgot password?</Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
-              </>
-            )}
+              )}
 
-            {/* Password */}
-            {(view === 'LOGIN' || (view === 'REGISTER' && registerStep === 'DETAILS')) && (
-              <View style={styles.fieldGroup}>
-                <Text style={[styles.label, { color: colors.textSecondary }]}>Password</Text>
-                <View style={[styles.inputWrapper, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
-                  <Lock size={16} color={colors.textMuted} />
-                  <TextInput
-                    placeholder="••••••••"
-                    placeholderTextColor={colors.textMuted}
-                    value={password}
-                    onChangeText={setPassword}
-                    style={[styles.input, { color: colors.textPrimary }]}
-                    secureTextEntry
-                  />
-                </View>
-                {view === 'LOGIN' && (
-                  <TouchableOpacity onPress={() => switchView('FORGOT_EMAIL')} style={styles.forgotLink}>
-                    <Text style={[styles.forgotText, { color: colors.textMuted }]}>Forgot password?</Text>
-                  </TouchableOpacity>
-                )}
+              {/* Submit */}
+              <TouchableOpacity
+                onPress={handleSubmit}
+                disabled={loading}
+                style={[styles.submitBtn, { backgroundColor: colors.accentCyan, opacity: loading ? 0.6 : 1, paddingVertical: isTablet ? spacing.xl : spacing.lg }]}
+              >
+                <Text style={[styles.submitText, { fontSize: scale(fontSizes.base) }]}>{getButtonText()}</Text>
+                {!loading && <ArrowRight size={scale(18)} color="#fff" />}
+              </TouchableOpacity>
+
+              {/* Toggle Auth */}
+              <TouchableOpacity
+                onPress={() => switchView(view === 'LOGIN' ? 'REGISTER' : 'LOGIN')}
+                style={styles.toggleBtn}
+              >
+                <Text style={[styles.toggleText, { color: colors.textMuted, fontSize: scale(fontSizes.sm) }]}>
+                  {view === 'LOGIN' ? "Don't have an account? Sign up" : 'Back to Sign In'}
+                </Text>
+              </TouchableOpacity>
+
+              {/* Divider */}
+              <View style={styles.dividerRow}>
+                <View style={[styles.dividerLine, { backgroundColor: colors.borderSubtle }]} />
+                <Text style={[styles.dividerText, { color: colors.textMuted, fontSize: scale(fontSizes.xs) }]}>Or continue with</Text>
+                <View style={[styles.dividerLine, { backgroundColor: colors.borderSubtle }]} />
               </View>
-            )}
 
-            {/* Submit */}
-            <TouchableOpacity
-              onPress={handleSubmit}
-              disabled={loading}
-              style={[styles.submitBtn, { backgroundColor: colors.accentCyan, opacity: loading ? 0.6 : 1 }]}
-            >
-              <Text style={styles.submitText}>{getButtonText()}</Text>
-              {!loading && <ArrowRight size={18} color="#fff" />}
-            </TouchableOpacity>
-
-            {/* Toggle Auth */}
-            <TouchableOpacity
-              onPress={() => switchView(view === 'LOGIN' ? 'REGISTER' : 'LOGIN')}
-              style={styles.toggleBtn}
-            >
-              <Text style={[styles.toggleText, { color: colors.textMuted }]}>
-                {view === 'LOGIN' ? "Don't have an account? Sign up" : 'Back to Sign In'}
-              </Text>
-            </TouchableOpacity>
-
-            {/* Divider */}
-            <View style={styles.dividerRow}>
-              <View style={[styles.dividerLine, { backgroundColor: colors.borderSubtle }]} />
-              <Text style={[styles.dividerText, { color: colors.textMuted }]}>Or continue with</Text>
-              <View style={[styles.dividerLine, { backgroundColor: colors.borderSubtle }]} />
+              {/* Guest Demo */}
+              <TouchableOpacity
+                onPress={() => {
+                  login('guest@example.com', 'guest123').then((res) => {
+                    if (res.success) navigation.navigate('Main');
+                    else {
+                      setEmail('guest@example.com');
+                      setPassword('password123');
+                      switchView('LOGIN');
+                    }
+                  });
+                }}
+                style={[styles.guestBtn, { backgroundColor: colors.surfaceHover, borderColor: colors.borderPrimary }]}
+              >
+                <Text style={[styles.guestText, { color: colors.textSecondary, fontSize: scale(fontSizes.base) }]}>Try Guest Demo</Text>
+              </TouchableOpacity>
             </View>
-
-            {/* Guest Demo */}
-            <TouchableOpacity
-              onPress={() => {
-                login('guest@example.com', 'guest123').then((res) => {
-                  if (res.success) navigation.navigate('Main');
-                  else {
-                    setEmail('guest@example.com');
-                    setPassword('password123');
-                    switchView('LOGIN');
-                  }
-                });
-              }}
-              style={[styles.guestBtn, { backgroundColor: colors.surfaceHover, borderColor: colors.borderPrimary }]}
-            >
-              <Text style={[styles.guestText, { color: colors.textSecondary }]}>Try Guest Demo</Text>
-            </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

@@ -6,14 +6,13 @@ import {
   ScrollView,
   ActivityIndicator,
   StyleSheet,
-  Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { ArrowLeft } from 'lucide-react-native';
 import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
 import api from '../api/api';
-import { useColors, spacing, radii, fontSizes } from '../theme';
+import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
 
 const CHART_HEIGHT = 250;
 
@@ -22,13 +21,14 @@ export default function IndexDetailScreen() {
   const navigation = useNavigation();
   const { symbol } = route.params;
   const colors = useColors();
+  const { scale, maxContentWidth } = useResponsive();
 
   const [index, setIndex] = useState(null);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState('1m');
+  const [chartWidth, setChartWidth] = useState(300);
 
-  const screenWidth = Dimensions.get('window').width - spacing.lg * 2 - spacing['2xl'] * 2;
   const periodLabels = { '1m': '1 Month', '3m': '3 Months', '1y': '1 Year', '3y': '3 Years' };
 
   // Fetch index metadata
@@ -76,9 +76,9 @@ export default function IndexDetailScreen() {
   const isPositive = lastPrice >= firstPrice;
   const strokeColor = isPositive ? colors.chartGreen : colors.chartRed;
 
-  const chartWidth = Math.max(screenWidth, 200);
+  const effectiveChartWidth = Math.max(chartWidth, 200);
   const points = chartData.map((d, i) => ({
-    x: (i / Math.max(chartData.length - 1, 1)) * chartWidth,
+    x: (i / Math.max(chartData.length - 1, 1)) * effectiveChartWidth,
     y: CHART_HEIGHT - ((d.price - minPrice) / range) * (CHART_HEIGHT - 20) - 10,
   }));
 
@@ -93,104 +93,109 @@ export default function IndexDetailScreen() {
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.bgPrimary }]} edges={['top']}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Back */}
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={[styles.backBtn, { backgroundColor: colors.surfaceHover }]}
-        >
-          <ArrowLeft size={18} color={colors.textSecondary} />
-          <Text style={[styles.backText, { color: colors.textSecondary }]}>Back</Text>
-        </TouchableOpacity>
+        <View style={maxContentWidth}>
+          {/* Back */}
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={[styles.backBtn, { backgroundColor: colors.surfaceHover }]}
+          >
+            <ArrowLeft size={scale(18)} color={colors.textSecondary} />
+            <Text style={[styles.backText, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>Back</Text>
+          </TouchableOpacity>
 
-        {/* Header Card */}
-        <View style={[styles.headerCard, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}>
-          <View style={styles.headerRow}>
-            <View>
-              <View style={styles.indexLabel}>
-                <View style={[styles.dotLive, { backgroundColor: colors.accentNeonGreen }]} />
-                <Text style={[styles.indexLabelText, { color: colors.textMuted }]}>Index</Text>
+          {/* Header Card */}
+          <View style={[styles.headerCard, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}>
+            <View style={styles.headerRow}>
+              <View>
+                <View style={styles.indexLabel}>
+                  <View style={[styles.dotLive, { backgroundColor: colors.accentNeonGreen }]} />
+                  <Text style={[styles.indexLabelText, { color: colors.textMuted, fontSize: scale(fontSizes.xs) }]}>Index</Text>
+                </View>
+                <Text style={[styles.indexName, { color: colors.textPrimary, fontSize: scale(fontSizes.xl) }]}>
+                  {index?.name || decodeURIComponent(symbol)}
+                </Text>
               </View>
-              <Text style={[styles.indexName, { color: colors.textPrimary }]}>
-                {index?.name || decodeURIComponent(symbol)}
+              {index && (
+                <View style={{ alignItems: 'flex-end' }}>
+                  <Text
+                    style={[
+                      styles.indexPrice,
+                      { color: (index.change ?? 0) >= 0 ? colors.accentGreen : colors.accentRed, fontSize: scale(fontSizes['2xl']) },
+                    ]}
+                  >
+                    {index.price?.toFixed(2) ?? '-'}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.indexChange,
+                      { color: (index.change ?? 0) >= 0 ? colors.accentGreen : colors.accentRed, fontSize: scale(fontSizes.sm) },
+                    ]}
+                  >
+                    {(index.change ?? 0) >= 0 ? '▲' : '▼'} {Math.abs(index.change ?? 0).toFixed(2)} (
+                    {Math.abs(index.change_pct ?? 0).toFixed(2)}%)
+                  </Text>
+                </View>
+              )}
+            </View>
+          </View>
+
+          {/* Period Selector */}
+          <View style={[styles.periodBar, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
+            {['1M', '3M', '1Y', '3Y'].map((p) => (
+              <TouchableOpacity
+                key={p}
+                style={[styles.periodBtn, period === p.toLowerCase() && { backgroundColor: `${colors.accentCyan}33` }]}
+                onPress={() => setPeriod(p.toLowerCase())}
+              >
+                <Text
+                  style={[
+                    styles.periodText,
+                    { color: period === p.toLowerCase() ? colors.accentCyan : colors.textMuted, fontWeight: period === p.toLowerCase() ? '700' : '400', fontSize: scale(fontSizes.sm) },
+                  ]}
+                >
+                  {p}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* Stats */}
+          {chartData.length > 0 && (
+            <View style={styles.statsRow}>
+              <Text style={[styles.statsLabel, { color: colors.textMuted, fontSize: scale(fontSizes.xs) }]}>{periodLabels[period]} Change</Text>
+              <Text style={[styles.statsValue, { color: periodChange >= 0 ? colors.accentGreen : colors.accentRed, fontSize: scale(fontSizes['2xl']) }]}>
+                {periodChange >= 0 ? '+' : ''}{periodChange.toFixed(2)}
+                <Text style={[styles.statsPct, { fontSize: scale(fontSizes.sm) }]}> ({periodChangePct.toFixed(2)}%)</Text>
               </Text>
             </View>
-            {index && (
-              <View style={{ alignItems: 'flex-end' }}>
-                <Text
-                  style={[
-                    styles.indexPrice,
-                    { color: (index.change ?? 0) >= 0 ? colors.accentGreen : colors.accentRed },
-                  ]}
-                >
-                  {index.price?.toFixed(2) ?? '-'}
-                </Text>
-                <Text
-                  style={[
-                    styles.indexChange,
-                    { color: (index.change ?? 0) >= 0 ? colors.accentGreen : colors.accentRed },
-                  ]}
-                >
-                  {(index.change ?? 0) >= 0 ? '▲' : '▼'} {Math.abs(index.change ?? 0).toFixed(2)} (
-                  {Math.abs(index.change_pct ?? 0).toFixed(2)}%)
-                </Text>
-              </View>
-            )}
-          </View>
-        </View>
+          )}
 
-        {/* Period Selector */}
-        <View style={[styles.periodBar, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
-          {['1M', '3M', '1Y', '3Y'].map((p) => (
-            <TouchableOpacity
-              key={p}
-              style={[styles.periodBtn, period === p.toLowerCase() && { backgroundColor: `${colors.accentCyan}33` }]}
-              onPress={() => setPeriod(p.toLowerCase())}
+          {/* Chart */}
+          {loading ? (
+            <ActivityIndicator size="large" color={colors.accentCyan} style={{ marginTop: 40 }} />
+          ) : chartData.length === 0 ? (
+            <View style={styles.emptyChart}>
+              <Text style={{ fontSize: 24, marginBottom: 8 }}>📊</Text>
+              <Text style={[styles.emptyText, { color: colors.textMuted }]}>No historical data</Text>
+            </View>
+          ) : (
+            <View
+              style={[styles.chartCard, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}
+              onLayout={(e) => setChartWidth(e.nativeEvent.layout.width - spacing.lg * 2)}
             >
-              <Text
-                style={[
-                  styles.periodText,
-                  { color: period === p.toLowerCase() ? colors.accentCyan : colors.textMuted, fontWeight: period === p.toLowerCase() ? '700' : '400' },
-                ]}
-              >
-                {p}
-              </Text>
-            </TouchableOpacity>
-          ))}
+              <Svg width={effectiveChartWidth} height={CHART_HEIGHT}>
+                <Defs>
+                  <SvgLinearGradient id="indexGrad" x1="0" y1="0" x2="0" y2="1">
+                    <Stop offset="0" stopColor={strokeColor} stopOpacity="0.3" />
+                    <Stop offset="1" stopColor={strokeColor} stopOpacity="0" />
+                  </SvgLinearGradient>
+                </Defs>
+                {areaPath && <Path d={areaPath} fill="url(#indexGrad)" />}
+                {linePath && <Path d={linePath} stroke={strokeColor} strokeWidth={2.5} fill="none" />}
+              </Svg>
+            </View>
+          )}
         </View>
-
-        {/* Stats */}
-        {chartData.length > 0 && (
-          <View style={styles.statsRow}>
-            <Text style={[styles.statsLabel, { color: colors.textMuted }]}>{periodLabels[period]} Change</Text>
-            <Text style={[styles.statsValue, { color: periodChange >= 0 ? colors.accentGreen : colors.accentRed }]}>
-              {periodChange >= 0 ? '+' : ''}{periodChange.toFixed(2)}
-              <Text style={styles.statsPct}> ({periodChangePct.toFixed(2)}%)</Text>
-            </Text>
-          </View>
-        )}
-
-        {/* Chart */}
-        {loading ? (
-          <ActivityIndicator size="large" color={colors.accentCyan} style={{ marginTop: 40 }} />
-        ) : chartData.length === 0 ? (
-          <View style={styles.emptyChart}>
-            <Text style={{ fontSize: 24, marginBottom: 8 }}>📊</Text>
-            <Text style={[styles.emptyText, { color: colors.textMuted }]}>No historical data</Text>
-          </View>
-        ) : (
-          <View style={[styles.chartCard, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}>
-            <Svg width={chartWidth} height={CHART_HEIGHT}>
-              <Defs>
-                <SvgLinearGradient id="indexGrad" x1="0" y1="0" x2="0" y2="1">
-                  <Stop offset="0" stopColor={strokeColor} stopOpacity="0.3" />
-                  <Stop offset="1" stopColor={strokeColor} stopOpacity="0" />
-                </SvgLinearGradient>
-              </Defs>
-              {areaPath && <Path d={areaPath} fill="url(#indexGrad)" />}
-              {linePath && <Path d={linePath} stroke={strokeColor} strokeWidth={2.5} fill="none" />}
-            </Svg>
-          </View>
-        )}
       </ScrollView>
     </SafeAreaView>
   );

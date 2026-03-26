@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
 import api from '../api/api';
-import { useColors, spacing, radii, fontSizes } from '../theme';
+import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
 
 const CHART_HEIGHT = 200;
 
 export default function NavChart({ fundId }) {
   const [period, setPeriod] = useState('1m');
   const colors = useColors();
-  const screenWidth = Dimensions.get('window').width - spacing.lg * 2 - spacing['2xl'] * 2;
+  const { scale } = useResponsive();
+  const [containerWidth, setContainerWidth] = useState(300);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['navHistory', fundId, period],
@@ -56,8 +57,8 @@ export default function NavChart({ fundId }) {
   const isPositive = lastNav >= firstNav;
   const strokeColor = isPositive ? colors.chartGreen : colors.chartRed;
 
-  // Build SVG path
-  const chartWidth = Math.max(screenWidth, 200);
+  // Use containerWidth from onLayout instead of Dimensions
+  const chartWidth = Math.max(containerWidth - spacing['2xl'] * 2, 200);
   const points = chartData.map((d, i) => {
     const x = (i / (chartData.length - 1)) * chartWidth;
     const y = CHART_HEIGHT - ((d.nav - minNav) / range) * (CHART_HEIGHT - 20) - 10;
@@ -75,12 +76,15 @@ export default function NavChart({ fundId }) {
   }
 
   return (
-    <View style={[styles.card, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}>
+    <View
+      style={[styles.card, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}
+      onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
+    >
       {/* Header */}
       <View style={styles.headerRow}>
         <View style={styles.titleRow}>
           <View style={[styles.titleBar, { backgroundColor: colors.accentCyan }]} />
-          <Text style={[styles.title, { color: colors.textMuted }]}>NAV TREND</Text>
+          <Text style={[styles.title, { color: colors.textMuted, fontSize: scale(fontSizes.xs) }]}>NAV TREND</Text>
         </View>
       </View>
 
@@ -101,6 +105,7 @@ export default function NavChart({ fundId }) {
                 {
                   color: period === p.toLowerCase() ? colors.accentCyan : colors.textMuted,
                   fontWeight: period === p.toLowerCase() ? '700' : '400',
+                  fontSize: scale(fontSizes.xs),
                 },
               ]}
             >
@@ -113,18 +118,18 @@ export default function NavChart({ fundId }) {
       {/* Stats */}
       {chartData.length > 0 && (
         <View style={styles.statsRow}>
-          <Text style={[styles.statsLabel, { color: colors.textMuted }]}>
+          <Text style={[styles.statsLabel, { color: colors.textMuted, fontSize: scale(fontSizes['2xs']) }]}>
             {periodLabels[period]} Change
           </Text>
           <Text
             style={[
               styles.statsValue,
-              { color: periodChange >= 0 ? colors.accentGreen : colors.accentRed },
+              { color: periodChange >= 0 ? colors.accentGreen : colors.accentRed, fontSize: scale(fontSizes.xl) },
             ]}
           >
             {periodChange >= 0 ? '+' : ''}
             {periodChange.toFixed(2)}
-            <Text style={styles.statsPct}> ({periodChangePct.toFixed(2)}%)</Text>
+            <Text style={[styles.statsPct, { fontSize: scale(fontSizes.sm) }]}> ({periodChangePct.toFixed(2)}%)</Text>
           </Text>
         </View>
       )}

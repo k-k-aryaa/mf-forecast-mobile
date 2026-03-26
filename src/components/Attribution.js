@@ -3,11 +3,12 @@ import { View, Text, Image, StyleSheet } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useTheme } from '../context/ThemeContext';
 import api from '../api/api';
-import { useColors, spacing, radii, fontSizes } from '../theme';
+import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
 
 export default function Attribution({ fundId }) {
   const { isDark } = useTheme();
   const colors = useColors();
+  const { isTablet, scale } = useResponsive();
 
   const trendUp = isDark
     ? require('../assets/trend_up.png')
@@ -107,10 +108,16 @@ export default function Attribution({ fundId }) {
     <View style={styles.wrapper}>
       <View style={styles.titleRow}>
         <View style={[styles.titleBar, { backgroundColor: colors.accentPurple }]} />
-        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Market Drivers</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textPrimary, fontSize: scale(fontSizes.xl) }]}>Market Drivers</Text>
       </View>
-      <MoversList title="Top Gainers" items={top_gainers} type="gainers" />
-      <MoversList title="Top Losers" items={top_losers} type="losers" />
+      <View style={isTablet ? styles.tabletRow : null}>
+        <View style={isTablet ? styles.tabletHalf : null}>
+          <MoversList title="Top Gainers" items={top_gainers} type="gainers" />
+        </View>
+        <View style={isTablet ? styles.tabletHalf : null}>
+          <MoversList title="Top Losers" items={top_losers} type="losers" />
+        </View>
+      </View>
     </View>
   );
 }
@@ -119,6 +126,13 @@ const styles = StyleSheet.create({
   wrapper: {
     marginTop: spacing['2xl'],
     gap: spacing.lg,
+  },
+  tabletRow: {
+    flexDirection: 'row',
+    gap: spacing.lg,
+  },
+  tabletHalf: {
+    flex: 1,
   },
   titleRow: {
     flexDirection: 'row',

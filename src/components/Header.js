@@ -10,7 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Sun, Moon, LogOut, User } from 'lucide-react-native';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { useColors, spacing, radii, fontSizes } from '../theme';
+import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
 import { NAV_CUTOFF_HOUR, NAV_CUTOFF_MINUTE, MARKET_STATUS_REFRESH_INTERVAL } from '../api/config';
 import api from '../api/api';
 
@@ -38,6 +38,7 @@ export default function Header() {
   const { theme, toggleTheme, isDark } = useTheme();
   const colors = useColors();
   const navigation = useNavigation();
+  const { isTablet, scale } = useResponsive();
 
   // Poll market status
   useEffect(() => {
@@ -75,10 +76,10 @@ export default function Header() {
         <View style={styles.brand}>
           <Image
             source={isDark ? logoDark : logoLight}
-            style={styles.logo}
+            style={[styles.logo, { width: scale(32), height: scale(32) }]}
             resizeMode="contain"
           />
-          <Text style={[styles.brandText, { color: colors.accentCyan }]}>MF-Forecast</Text>
+          <Text style={[styles.brandText, { color: colors.accentCyan, fontSize: scale(fontSizes['2xl']) }]}>MF-Forecast</Text>
         </View>
 
         {/* Status & Controls */}
@@ -89,11 +90,11 @@ export default function Header() {
               {marketStatus === 'OPEN' && (
                 <View style={[styles.dotLive, { backgroundColor: colors.accentNeonGreen }]} />
               )}
-              <Text style={[styles.statusText, { color: statusColor }]}>
+              <Text style={[styles.statusText, { color: statusColor, fontSize: scale(fontSizes.xs) }]}>
                 {marketStatus ? marketStatus.replace('_', ' ') : 'CLOSED'}
               </Text>
             </View>
-            <Text style={[styles.cutoffText, { color: colors.textMuted }]}>
+            <Text style={[styles.cutoffText, { color: colors.textMuted, fontSize: scale(fontSizes['2xs']) }]}>
               {isTradingDay ? countdown : 'Holiday'}
             </Text>
           </View>
@@ -101,22 +102,22 @@ export default function Header() {
           {/* Theme Toggle */}
           <TouchableOpacity onPress={toggleTheme} style={styles.iconBtn}>
             {isDark ? (
-              <Sun size={18} color={colors.textSecondary} />
+              <Sun size={scale(18)} color={colors.textSecondary} />
             ) : (
-              <Moon size={18} color={colors.textSecondary} />
+              <Moon size={scale(18)} color={colors.textSecondary} />
             )}
           </TouchableOpacity>
 
           {/* Auth */}
           {user ? (
             <View style={styles.userSection}>
-              <View style={[styles.avatar, { backgroundColor: colors.accentCyan }]}>
-                <Text style={styles.avatarText}>
+              <View style={[styles.avatar, { backgroundColor: colors.accentCyan, width: scale(28), height: scale(28), borderRadius: scale(14) }]}>
+                <Text style={[styles.avatarText, { fontSize: scale(fontSizes.sm) }]}>
                   {user.full_name ? user.full_name[0] : 'U'}
                 </Text>
               </View>
               <TouchableOpacity onPress={logout} style={styles.iconBtn}>
-                <LogOut size={16} color={colors.accentRed} />
+                <LogOut size={scale(16)} color={colors.accentRed} />
               </TouchableOpacity>
             </View>
           ) : (
@@ -124,7 +125,7 @@ export default function Header() {
               onPress={() => navigation.navigate('LoginScreen')}
               style={[styles.loginBtn, { backgroundColor: colors.accentCyan }]}
             >
-              <Text style={styles.loginBtnText}>Login</Text>
+              <Text style={[styles.loginBtnText, { fontSize: scale(fontSizes.sm) }]}>Login</Text>
             </TouchableOpacity>
           )}
         </View>

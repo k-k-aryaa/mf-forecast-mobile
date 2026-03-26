@@ -5,12 +5,13 @@ import * as Linking from 'expo-linking';
 import { useQuery } from '@tanstack/react-query';
 import { Clock, Calendar, ExternalLink, ChevronDown, ChevronUp, BookOpen } from 'lucide-react-native';
 import api from '../api/api';
-import { useColors, spacing, radii, fontSizes } from '../theme';
+import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
 import Header from '../components/Header';
 
 // ========= INVESTMENT TIPS =========
 function InvestmentTips() {
   const colors = useColors();
+  const { scale } = useResponsive();
   const [cutoff1, setCutoff1] = useState('');
   const [cutoff2, setCutoff2] = useState('');
 
@@ -36,18 +37,18 @@ function InvestmentTips() {
   return (
     <View style={[styles.card, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}>
       <View style={styles.cardHeader}>
-        <Clock size={20} color={colors.accentCyan} />
-        <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>Want Same Day NAV?</Text>
+        <Clock size={scale(20)} color={colors.accentCyan} />
+        <Text style={[styles.cardTitle, { color: colors.textPrimary, fontSize: scale(fontSizes.base) }]}>Want Same Day NAV?</Text>
       </View>
       <View style={styles.tipRow}>
-        <Text style={[styles.tipLabel, { color: colors.textSecondary }]}>Before 2:00 PM</Text>
-        <Text style={[styles.tipValue, { color: colors.accentCyan }]}>{cutoff1}</Text>
-        <Text style={[styles.tipPlatforms, { color: colors.textMuted }]}>Groww, Zerodha</Text>
+        <Text style={[styles.tipLabel, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>Before 2:00 PM</Text>
+        <Text style={[styles.tipValue, { color: colors.accentCyan, fontSize: scale(fontSizes.lg) }]}>{cutoff1}</Text>
+        <Text style={[styles.tipPlatforms, { color: colors.textMuted, fontSize: scale(fontSizes.xs) }]}>Groww, Zerodha</Text>
       </View>
       <View style={styles.tipRow}>
-        <Text style={[styles.tipLabel, { color: colors.textSecondary }]}>Between 2-3 PM</Text>
-        <Text style={[styles.tipValue, { color: colors.accentCyan }]}>{cutoff2}</Text>
-        <Text style={[styles.tipPlatforms, { color: colors.textMuted }]}>MFCentral, AMC</Text>
+        <Text style={[styles.tipLabel, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>Between 2-3 PM</Text>
+        <Text style={[styles.tipValue, { color: colors.accentCyan, fontSize: scale(fontSizes.lg) }]}>{cutoff2}</Text>
+        <Text style={[styles.tipPlatforms, { color: colors.textMuted, fontSize: scale(fontSizes.xs) }]}>MFCentral, AMC</Text>
       </View>
     </View>
   );
@@ -56,6 +57,7 @@ function InvestmentTips() {
 // ========= HOLIDAY CALENDAR =========
 function HolidayCalendar() {
   const colors = useColors();
+  const { scale } = useResponsive();
   const { data } = useQuery({ queryKey: ['holidays'], queryFn: api.getHolidays });
   const holidays = data?.holidays || [];
 
@@ -68,14 +70,14 @@ function HolidayCalendar() {
   return (
     <View style={[styles.card, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}>
       <View style={styles.cardHeader}>
-        <Calendar size={20} color={colors.accentPurple} />
-        <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>Trading Holidays 2026</Text>
+        <Calendar size={scale(20)} color={colors.accentPurple} />
+        <Text style={[styles.cardTitle, { color: colors.textPrimary, fontSize: scale(fontSizes.base) }]}>Trading Holidays 2026</Text>
       </View>
       {nextHoliday && (
         <View style={[styles.nextHoliday, { backgroundColor: colors.surfaceHover, borderColor: colors.borderGlow }]}>
-          <Text style={[styles.nextLabel, { color: colors.accentCyan }]}>Next Holiday</Text>
-          <Text style={[styles.nextName, { color: colors.textPrimary }]}>{nextHoliday.name}</Text>
-          <Text style={[styles.nextDate, { color: colors.textMuted }]}>
+          <Text style={[styles.nextLabel, { color: colors.accentCyan, fontSize: scale(fontSizes.xs) }]}>Next Holiday</Text>
+          <Text style={[styles.nextName, { color: colors.textPrimary, fontSize: scale(fontSizes.base) }]}>{nextHoliday.name}</Text>
+          <Text style={[styles.nextDate, { color: colors.textMuted, fontSize: scale(fontSizes.xs) }]}>
             {new Date(nextHoliday.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
             {daysUntil != null && ` • in ${daysUntil} day${daysUntil !== 1 ? 's' : ''}`}
           </Text>
@@ -88,14 +90,14 @@ function HolidayCalendar() {
           return (
             <View key={i} style={[styles.holidayItem, { borderBottomColor: colors.borderSubtle, opacity: isPast ? 0.5 : 1 }]}>
               <View style={[styles.dateBox, { backgroundColor: colors.surfaceHover }]}>
-                <Text style={[styles.dateDay, { color: colors.textPrimary }]}>{d.getDate()}</Text>
+                <Text style={[styles.dateDay, { color: colors.textPrimary, fontSize: scale(fontSizes.base) }]}>{d.getDate()}</Text>
                 <Text style={[styles.dateMonth, { color: colors.textMuted }]}>
                   {d.toLocaleDateString('en-IN', { month: 'short' })}
                 </Text>
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={[styles.holidayName, { color: colors.textPrimary }]}>{h.name}</Text>
-                <Text style={[styles.holidayDay, { color: colors.textMuted }]}>
+                <Text style={[styles.holidayName, { color: colors.textPrimary, fontSize: scale(fontSizes.sm) }]}>{h.name}</Text>
+                <Text style={[styles.holidayDay, { color: colors.textMuted, fontSize: scale(fontSizes.xs) }]}>
                   {d.toLocaleDateString('en-IN', { weekday: 'long' })}
                   {isPast && ' • Passed'}
                 </Text>
@@ -139,6 +141,7 @@ const AMC_LINKS = {
 
 function UsefulLinks() {
   const colors = useColors();
+  const { scale } = useResponsive();
   const [activeTab, setActiveTab] = useState('official');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -164,14 +167,14 @@ function UsefulLinks() {
   return (
     <View style={[styles.card, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}>
       <View style={styles.cardHeader}>
-        <ExternalLink size={20} color={colors.accentGreen} />
-        <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>Useful Links</Text>
+        <ExternalLink size={scale(20)} color={colors.accentGreen} />
+        <Text style={[styles.cardTitle, { color: colors.textPrimary, fontSize: scale(fontSizes.base) }]}>Useful Links</Text>
       </View>
       <View style={[styles.tabBar, { backgroundColor: colors.surfaceHover }]}>
         {['official', 'platforms', 'amc'].map(t => (
           <TouchableOpacity key={t} onPress={() => setActiveTab(t)}
             style={[styles.tabBtn, activeTab === t && { backgroundColor: `${colors.accentCyan}33` }]}>
-            <Text style={[styles.tabBtnText, { color: activeTab === t ? colors.accentCyan : colors.textMuted }]}>
+            <Text style={[styles.tabBtnText, { color: activeTab === t ? colors.accentCyan : colors.textMuted, fontSize: scale(fontSizes.xs) }]}>
               {tabLabels[t]}
             </Text>
           </TouchableOpacity>
@@ -181,20 +184,20 @@ function UsefulLinks() {
         <TouchableOpacity key={i} onPress={() => Linking.openURL(link.url)}
           style={[styles.linkItem, { borderBottomColor: colors.borderSubtle }]}>
           <View style={{ flex: 1 }}>
-            <Text style={[styles.linkName, { color: colors.textPrimary }]}>{link.name}</Text>
-            <Text style={[styles.linkDesc, { color: colors.textMuted }]}>{link.desc}</Text>
+            <Text style={[styles.linkName, { color: colors.textPrimary, fontSize: scale(fontSizes.base) }]}>{link.name}</Text>
+            <Text style={[styles.linkDesc, { color: colors.textMuted, fontSize: scale(fontSizes.xs) }]}>{link.desc}</Text>
           </View>
-          <ExternalLink size={14} color={colors.textMuted} />
+          <ExternalLink size={scale(14)} color={colors.textMuted} />
         </TouchableOpacity>
       ))}
       {activeTab === 'platforms' && platformLinks.map((link, i) => (
         <TouchableOpacity key={i} onPress={() => Linking.openURL(link.url)}
           style={[styles.linkItem, { borderBottomColor: colors.borderSubtle }]}>
           <View style={{ flex: 1 }}>
-            <Text style={[styles.linkName, { color: colors.textPrimary }]}>{link.name}</Text>
-            <Text style={[styles.linkDesc, { color: colors.textMuted }]}>{link.desc}</Text>
+            <Text style={[styles.linkName, { color: colors.textPrimary, fontSize: scale(fontSizes.base) }]}>{link.name}</Text>
+            <Text style={[styles.linkDesc, { color: colors.textMuted, fontSize: scale(fontSizes.xs) }]}>{link.desc}</Text>
           </View>
-          <ExternalLink size={14} color={colors.textMuted} />
+          <ExternalLink size={scale(14)} color={colors.textMuted} />
         </TouchableOpacity>
       ))}
       {activeTab === 'amc' && (
@@ -208,15 +211,16 @@ function UsefulLinks() {
               backgroundColor: colors.surfaceHover,
               color: colors.textPrimary,
               borderColor: colors.borderSubtle,
+              fontSize: scale(fontSizes.sm),
             }]}
           />
           {filteredAMCs.map(([name, url], i) => (
             <TouchableOpacity key={i} onPress={() => Linking.openURL(url)}
               style={[styles.linkItem, { borderBottomColor: colors.borderSubtle }]}>
-              <Text style={[styles.linkName, { color: colors.textPrimary, flex: 1 }]}>
+              <Text style={[styles.linkName, { color: colors.textPrimary, flex: 1, fontSize: scale(fontSizes.base) }]}>
                 {name.replace(' Mutual Fund', '')}
               </Text>
-              <ExternalLink size={14} color={colors.textMuted} />
+              <ExternalLink size={scale(14)} color={colors.textMuted} />
             </TouchableOpacity>
           ))}
         </>
@@ -228,6 +232,7 @@ function UsefulLinks() {
 // ========= LEARN SECTION =========
 function LearnSection() {
   const colors = useColors();
+  const { scale } = useResponsive();
   const [expanded, setExpanded] = useState(null);
 
   const items = [
@@ -260,18 +265,18 @@ function LearnSection() {
   return (
     <View style={[styles.card, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}>
       <View style={styles.cardHeader}>
-        <BookOpen size={20} color={colors.accentPurple} />
-        <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>Learn</Text>
+        <BookOpen size={scale(20)} color={colors.accentPurple} />
+        <Text style={[styles.cardTitle, { color: colors.textPrimary, fontSize: scale(fontSizes.base) }]}>Learn</Text>
       </View>
       {items.map((item, i) => (
         <TouchableOpacity key={i} onPress={() => setExpanded(expanded === i ? null : i)}
           style={[styles.learnItem, { borderBottomColor: colors.borderSubtle }]}>
           <View style={styles.learnHeader}>
-            <Text style={[styles.learnTitle, { color: colors.textPrimary }]}>{item.title}</Text>
-            {expanded === i ? <ChevronUp size={16} color={colors.textMuted} /> : <ChevronDown size={16} color={colors.textMuted} />}
+            <Text style={[styles.learnTitle, { color: colors.textPrimary, fontSize: scale(fontSizes.base) }]}>{item.title}</Text>
+            {expanded === i ? <ChevronUp size={scale(16)} color={colors.textMuted} /> : <ChevronDown size={scale(16)} color={colors.textMuted} />}
           </View>
           {expanded === i && (
-            <Text style={[styles.learnContent, { color: colors.textSecondary }]}>{item.content}</Text>
+            <Text style={[styles.learnContent, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>{item.content}</Text>
           )}
         </TouchableOpacity>
       ))}
@@ -282,19 +287,35 @@ function LearnSection() {
 // ========= TOOLKIT SCREEN =========
 export default function ToolkitScreen() {
   const colors = useColors();
+  const { isTablet, scale, maxContentWidth } = useResponsive();
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.bgPrimary }]} edges={['top']}>
       <Header />
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <Text style={[styles.pageTitle, { color: colors.textPrimary }]}>Investor Toolkit</Text>
-        <Text style={[styles.pageSubtitle, { color: colors.textMuted }]}>
-          Smart tools and insights for better investment decisions.
-        </Text>
-        <InvestmentTips />
-        <HolidayCalendar />
-        <UsefulLinks />
-        <LearnSection />
+        <View style={maxContentWidth}>
+          <Text style={[styles.pageTitle, { color: colors.textPrimary, fontSize: scale(fontSizes['2xl']) }]}>Investor Toolkit</Text>
+          <Text style={[styles.pageSubtitle, { color: colors.textMuted, fontSize: scale(fontSizes.sm) }]}>
+            Smart tools and insights for better investment decisions.
+          </Text>
+          {isTablet ? (
+            <>
+              <View style={styles.tabletRow}>
+                <View style={styles.tabletHalf}><InvestmentTips /></View>
+                <View style={styles.tabletHalf}><HolidayCalendar /></View>
+              </View>
+              <UsefulLinks />
+              <LearnSection />
+            </>
+          ) : (
+            <>
+              <InvestmentTips />
+              <HolidayCalendar />
+              <UsefulLinks />
+              <LearnSection />
+            </>
+          )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -344,4 +365,7 @@ const styles = StyleSheet.create({
   learnHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   learnTitle: { fontSize: fontSizes.base, fontWeight: '600', flex: 1 },
   learnContent: { fontSize: fontSizes.sm, lineHeight: 20, marginTop: spacing.sm },
+  // Tablet layout
+  tabletRow: { flexDirection: 'row', gap: spacing.lg },
+  tabletHalf: { flex: 1 },
 });

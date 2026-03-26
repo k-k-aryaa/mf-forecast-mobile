@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useColors, spacing, radii, fontSizes } from '../theme';
+import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
 import api from '../api/api';
 
 const VISIBLE_INDICES_COUNT = 5;
@@ -18,6 +18,8 @@ export default function MarketTicker() {
   const [loading, setLoading] = useState(true);
   const colors = useColors();
   const navigation = useNavigation();
+  const { isTablet, scale } = useResponsive();
+  const visibleCount = isTablet ? 8 : VISIBLE_INDICES_COUNT;
 
   useEffect(() => {
     const fetchIndices = async () => {
@@ -45,9 +47,9 @@ export default function MarketTicker() {
 
   if (!indices.length) return null;
 
-  const visibleIndices = indices.slice(0, VISIBLE_INDICES_COUNT);
-  const hasMore = indices.length > VISIBLE_INDICES_COUNT;
-  const remainingCount = indices.length - VISIBLE_INDICES_COUNT;
+  const visibleIndices = indices.slice(0, visibleCount);
+  const hasMore = indices.length > visibleCount;
+  const remainingCount = indices.length - visibleCount;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.tickerBg, borderBottomColor: colors.borderPrimary }]}>

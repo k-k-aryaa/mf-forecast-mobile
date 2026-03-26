@@ -9,7 +9,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Heart, RefreshCw } from 'lucide-react-native';
 import api from '../api/api';
 import { useAuth } from '../context/AuthContext';
-import { useColors, spacing, radii, fontSizes } from '../theme';
+import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
 import ProcessingState from './ProcessingState';
 
 export default function EstimateCard({ fundId }) {
@@ -23,6 +23,7 @@ export default function EstimateCard({ fundId }) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const colors = useColors();
+  const { scale } = useResponsive();
 
   const { data: favorites } = useQuery({
     queryKey: ['favorites'],
@@ -90,7 +91,7 @@ export default function EstimateCard({ fundId }) {
           {user && (
             <TouchableOpacity onPress={toggleFavorite} style={styles.favBtn}>
               <Heart
-                size={16}
+                size={scale(16)}
                 color={isFavorited ? colors.accentRed : colors.textMuted}
                 fill={isFavorited ? colors.accentRed : 'transparent'}
               />
@@ -131,14 +132,14 @@ export default function EstimateCard({ fundId }) {
       {/* NAV Grid */}
       <View style={styles.navGrid}>
         <View style={[styles.navBoxHighlight, { backgroundColor: colors.surfaceActive, borderColor: colors.borderGlow }]}>
-          <Text style={[styles.navLabel, { color: colors.textMuted }]}>Predicted NAV</Text>
-          <Text style={[styles.navValue, { color: colors.accentCyan }]}>
+          <Text style={[styles.navLabel, { color: colors.textMuted, fontSize: scale(fontSizes['2xs']) }]}>Predicted NAV</Text>
+          <Text style={[styles.navValue, { color: colors.accentCyan, fontSize: scale(fontSizes.lg) }]}>
             ₹{data.estimated_nav?.toFixed(2) ?? '-'}
           </Text>
         </View>
         <View style={[styles.navBoxSecondary, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
-          <Text style={[styles.navLabel, { color: colors.textMuted }]}>Previous</Text>
-          <Text style={[styles.navValue, { color: colors.textSecondary }]}>
+          <Text style={[styles.navLabel, { color: colors.textMuted, fontSize: scale(fontSizes['2xs']) }]}>Previous</Text>
+          <Text style={[styles.navValue, { color: colors.textSecondary, fontSize: scale(fontSizes.lg) }]}>
             ₹{data.previous_nav?.toFixed(2) ?? '-'}
           </Text>
         </View>

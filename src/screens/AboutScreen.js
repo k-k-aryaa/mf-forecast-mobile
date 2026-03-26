@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Zap, Brain, BarChart3, ShieldCheck, TrendingUp, Eye, Target, Code2, AlertTriangle, Trash2 } from 'lucide-react-native';
 import * as Linking from 'expo-linking';
-import { useColors, spacing, radii, fontSizes } from '../theme';
+import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
 import Header from '../components/Header';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/api';
@@ -14,6 +14,7 @@ export default function AboutScreen() {
   const navigation = useNavigation();
   const { user, logout } = useAuth();
   const [isDeleting, setIsDeleting] = useState(false);
+  const { isTablet, scale, maxContentWidth } = useResponsive();
 
   const handleDeleteAccount = () => {
     Alert.alert(
@@ -43,10 +44,10 @@ export default function AboutScreen() {
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.bgPrimary }]} edges={['top']}>
       <Header />
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={[styles.content, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}>
+        <View style={[styles.content, maxContentWidth, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}>
 
           {/* Hero */}
-          <Text style={[styles.intro, { color: colors.textSecondary }]}>
+          <Text style={[styles.intro, { color: colors.textSecondary, fontSize: scale(fontSizes.base) }]}>
             Transparent, AI-powered mutual fund NAV estimates — built with accuracy you can verify.
           </Text>
 
@@ -54,11 +55,11 @@ export default function AboutScreen() {
           <View style={[styles.howSection, { borderColor: 'rgba(6, 182, 212, 0.15)' }]}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: spacing.sm }}>
               <View style={[styles.sectionIconWrap, { backgroundColor: 'rgba(6, 182, 212, 0.15)' }]}>
-                <Brain size={24} color={colors.accentCyan} />
+                <Brain size={scale(24)} color={colors.accentCyan} />
               </View>
-              <Text style={[styles.sectionTitle, { color: colors.accentCyan, marginTop: 0, marginBottom: 0 }]}>How It Works</Text>
+              <Text style={[styles.sectionTitle, { color: colors.accentCyan, marginTop: 0, marginBottom: 0, fontSize: scale(fontSizes.lg) }]}>How It Works</Text>
             </View>
-            <Text style={[styles.sectionText, { color: colors.textSecondary }]}>
+            <Text style={[styles.sectionText, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>
               We analyze the <Text style={{ color: colors.textPrimary, fontWeight: '600' }}>live stock prices</Text> of every holding inside your mutual fund and use <Text style={{ color: colors.textPrimary, fontWeight: '600' }}>AI models</Text> to calculate the estimated NAV in real-time.
             </Text>
             {[
@@ -70,25 +71,25 @@ export default function AboutScreen() {
                 <View style={[styles.stepNumber, { backgroundColor: colors.accentPurple }]}>
                   <Text style={styles.stepNumberText}>{i + 1}</Text>
                 </View>
-                <Text style={[styles.stepText, { color: colors.textSecondary }]}>{text}</Text>
+                <Text style={[styles.stepText, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>{text}</Text>
               </View>
             ))}
 
             {/* Feature cards inside How It Works */}
-            <View style={styles.featuresWrap}>
+            <View style={[styles.featuresWrap, isTablet && styles.featuresWrapTablet]}>
               {[
                 { icon: Zap, title: 'Live NAV Estimates', desc: "See your fund's estimated NAV updating in real-time throughout the trading day.", color: colors.accentCyan },
                 { icon: BarChart3, title: 'Portfolio Heatmap', desc: 'See sector-wise and stock-wise attribution — know exactly which holdings are driving returns.', color: colors.accentGreen },
                 { icon: TrendingUp, title: 'NAV History Charts', desc: "Track how your fund's NAV has moved over time with interactive charts.", color: colors.accentPurple },
                 { icon: ShieldCheck, title: 'Prediction Accuracy', desc: "Every day, we show yesterday's prediction vs. actual NAV — judge our accuracy yourself.", color: '#fbbf24' },
               ].map((f, i) => (
-                <View key={i} style={[styles.featureCard, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
+                <View key={i} style={[styles.featureCard, isTablet && styles.featureCardTablet, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
                   <View style={[styles.iconCircle, { backgroundColor: `${f.color}22` }]}>
-                    <f.icon size={22} color={f.color} />
+                    <f.icon size={scale(22)} color={f.color} />
                   </View>
                   <View style={styles.featureTextWrap}>
-                    <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{f.title}</Text>
-                    <Text style={[styles.featureDesc, { color: colors.textMuted }]}>{f.desc}</Text>
+                    <Text style={[styles.featureTitle, { color: colors.textPrimary, fontSize: scale(fontSizes.base) }]}>{f.title}</Text>
+                    <Text style={[styles.featureDesc, { color: colors.textMuted, fontSize: scale(fontSizes.sm) }]}>{f.desc}</Text>
                   </View>
                 </View>
               ))}
@@ -99,16 +100,16 @@ export default function AboutScreen() {
           <View style={[styles.trustSection, { borderColor: 'rgba(16, 185, 129, 0.15)' }]}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: spacing.sm }}>
               <View style={[styles.sectionIconWrap, { backgroundColor: 'rgba(16, 185, 129, 0.15)' }]}>
-                <Eye size={24} color="#10b981" />
+                <Eye size={scale(24)} color="#10b981" />
               </View>
-              <Text style={[styles.sectionTitle, { color: '#10b981', marginTop: 0, marginBottom: 0 }]}>Built on Transparency</Text>
+              <Text style={[styles.sectionTitle, { color: '#10b981', marginTop: 0, marginBottom: 0, fontSize: scale(fontSizes.lg) }]}>Built on Transparency</Text>
             </View>
-            <Text style={[styles.sectionText, { color: colors.textSecondary }]}>
+            <Text style={[styles.sectionText, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>
               We built <Text style={{ color: colors.textPrimary, fontWeight: '600' }}>TruthLens</Text> — our transparency engine that compares yesterday's predictions against the actual official NAVs published by AMCs.
             </Text>
             <View style={[styles.highlightBox, { borderLeftColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.06)' }]}>
-              <Target size={16} color="#10b981" />
-              <Text style={[styles.highlightText, { color: colors.textSecondary }]}>
+              <Target size={scale(16)} color="#10b981" />
+              <Text style={[styles.highlightText, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>
                 Check our track record before you trust our numbers. If yesterday was 99.7% accurate, you know today's estimate is reliable.
               </Text>
             </View>
@@ -119,10 +120,10 @@ export default function AboutScreen() {
             onPress={() => navigation.navigate('Disclaimer')}
             style={[styles.disclaimerBanner, { backgroundColor: `${colors.accentRed}12`, borderColor: `${colors.accentRed}40` }]}
           >
-            <AlertTriangle size={20} color={colors.accentRed} />
+            <AlertTriangle size={scale(20)} color={colors.accentRed} />
             <View style={styles.disclaimerBannerTextWrap}>
-              <Text style={[styles.disclaimerBannerTitle, { color: colors.accentRed }]}>Important Disclaimer</Text>
-              <Text style={[styles.disclaimerBannerSubtitle, { color: colors.textSecondary }]}>
+              <Text style={[styles.disclaimerBannerTitle, { color: colors.accentRed, fontSize: scale(fontSizes.sm) }]}>Important Disclaimer</Text>
+              <Text style={[styles.disclaimerBannerSubtitle, { color: colors.textSecondary, fontSize: scale(fontSizes.xs) }]}>
                 Read our technical & financial risks before using. <Text style={{ color: colors.accentCyan, fontWeight: '600' }}>View Details »</Text>
               </Text>
             </View>
@@ -130,24 +131,24 @@ export default function AboutScreen() {
 
           {/* Developer Section */}
           <View style={[styles.devSection, { borderTopColor: colors.borderSubtle }]}>
-            <Text style={[styles.devTitle, { color: colors.textPrimary }]}>Crafted With Passion</Text>
-            <Text style={[styles.devDesc, { color: colors.textMuted }]}>
+            <Text style={[styles.devTitle, { color: colors.textPrimary, fontSize: scale(fontSizes.lg) }]}>Crafted With Passion</Text>
+            <Text style={[styles.devDesc, { color: colors.textMuted, fontSize: scale(fontSizes.sm) }]}>
               Curious about the mind behind this project?
             </Text>
             <TouchableOpacity
               onPress={() => Linking.openURL('https://k-k-aryaa.github.io/')}
               style={[styles.devLink, { borderColor: colors.accentPurple }]}
             >
-              <Code2 size={16} color={colors.accentPurple} />
-              <Text style={[styles.devLinkText, { color: colors.accentPurple }]}>Developer Portfolio</Text>
+              <Code2 size={scale(16)} color={colors.accentPurple} />
+              <Text style={[styles.devLinkText, { color: colors.accentPurple, fontSize: scale(fontSizes.sm) }]}>Developer Portfolio</Text>
             </TouchableOpacity>
           </View>
 
           {/* Account Management Section (Only visible if logged in) */}
           {user && (
             <View style={[styles.accountSection, { borderTopColor: colors.borderSubtle }]}>
-              <Text style={[styles.devTitle, { color: colors.accentRed }]}>Account Management</Text>
-              <Text style={[styles.devDesc, { color: colors.textSecondary }]}>
+              <Text style={[styles.devTitle, { color: colors.accentRed, fontSize: scale(fontSizes.lg) }]}>Account Management</Text>
+              <Text style={[styles.devDesc, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>
                 Permanently delete your account and all saved favorites.
               </Text>
               <TouchableOpacity
@@ -159,8 +160,8 @@ export default function AboutScreen() {
                   <ActivityIndicator size="small" color={colors.accentRed} />
                 ) : (
                   <>
-                    <Trash2 size={16} color={colors.accentRed} />
-                    <Text style={[styles.devLinkText, { color: colors.accentRed }]}>Delete My Account</Text>
+                    <Trash2 size={scale(16)} color={colors.accentRed} />
+                    <Text style={[styles.devLinkText, { color: colors.accentRed, fontSize: scale(fontSizes.sm) }]}>Delete My Account</Text>
                   </>
                 )}
               </TouchableOpacity>
@@ -235,22 +236,31 @@ const styles = StyleSheet.create({
   featuresWrap: {
     marginTop: spacing.xl,
   },
+  featuresWrapTablet: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.md,
+  },
   featureCard: {
     flexDirection: 'row',
-    alignItems: 'center', /* Changed from flex-start to center properly vertically */
+    alignItems: 'center',
     gap: spacing.md,
     padding: spacing.lg,
     borderWidth: 1,
     borderRadius: radii.lg,
     marginBottom: spacing.md,
   },
+  featureCardTablet: {
+    width: '48%',
+    marginBottom: 0,
+  },
   iconCircle: {
-    width: 44, /* Slightly larger to comfortably fit 22px icon */
+    width: 44,
     height: 44,
     borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden', /* Added to ensure background doesn't bleed */
+    overflow: 'hidden',
   },
   sectionIconWrap: {
     width: 44,

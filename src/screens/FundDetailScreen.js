@@ -2,7 +2,7 @@ import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { useColors, spacing } from '../theme';
+import { useColors, spacing, useResponsive } from '../theme';
 import Header from '../components/Header';
 import MarketTicker from '../components/MarketTicker';
 import FundSelector from '../components/FundSelector';
@@ -16,6 +16,7 @@ export default function FundDetailScreen() {
   const navigation = useNavigation();
   const colors = useColors();
   const { fundId } = route.params;
+  const { isTablet, maxContentWidth } = useResponsive();
 
   const handleFundChange = (newFundId) => {
     navigation.setParams({ fundId: newFundId });
@@ -31,15 +32,31 @@ export default function FundDetailScreen() {
       >
         <MarketTicker />
 
-        <View style={styles.content}>
+        <View style={[styles.content, maxContentWidth]}>
           <FundSelector selectedFundId={fundId} onSelect={handleFundChange} />
 
-          <View style={styles.grid}>
-            <EstimateCard fundId={fundId} />
-            <NavChart fundId={fundId} />
-            <Attribution fundId={fundId} />
-            <TruthLens fundId={fundId} />
-          </View>
+          {isTablet ? (
+            /* Tablet: side-by-side layout for estimate + truth lens */
+            <View style={styles.grid}>
+              <View style={styles.tabletTopRow}>
+                <View style={styles.tabletTopCard}>
+                  <EstimateCard fundId={fundId} />
+                </View>
+                <View style={styles.tabletTopCard}>
+                  <TruthLens fundId={fundId} />
+                </View>
+              </View>
+              <NavChart fundId={fundId} />
+              <Attribution fundId={fundId} />
+            </View>
+          ) : (
+            <View style={styles.grid}>
+              <EstimateCard fundId={fundId} />
+              <NavChart fundId={fundId} />
+              <Attribution fundId={fundId} />
+              <TruthLens fundId={fundId} />
+            </View>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -56,5 +73,12 @@ const styles = StyleSheet.create({
   },
   grid: {
     gap: spacing.lg,
+  },
+  tabletTopRow: {
+    flexDirection: 'row',
+    gap: spacing.lg,
+  },
+  tabletTopCard: {
+    flex: 1,
   },
 });

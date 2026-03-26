@@ -2,10 +2,11 @@ import { useMemo } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { darkColors, lightColors, spacing, radii, shadows } from './colors';
 import { fontSizes } from './typography';
+import useResponsive from './useResponsive';
 
 export const useColors = () => {
   const { isDark } = useTheme();
   return useMemo(() => (isDark ? darkColors : lightColors), [isDark]);
 };
 
-export { darkColors, lightColors, spacing, radii, shadows, fontSizes };
+export { darkColors, lightColors, spacing, radii, shadows, fontSizes, useResponsive };
