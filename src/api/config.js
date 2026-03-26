@@ -3,8 +3,8 @@
  * Ported from mf-forecast-frontend/src/config.js
  */
 
-// API Configuration - use your machine's LAN IP for mobile testing
-export const API_BASE_URL = 'http://192.168.1.20:8585';
+// API Configuration - Production URL
+export const API_BASE_URL = 'https://mfforecast.com/api';
 
 // App Configuration
 export const APP_NAME = 'MF Forecast';

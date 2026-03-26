@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "mf-forecast-mobile",
-    "slug": "mf-forecast-mobile",
+    "slug": "mf-forecast",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,13 +21,20 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "package": "com.anonymous.mfforecastmobile"
+      "package": "com.mfforecast.app",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "f5287b57-4ae4-4676-82a6-9ba62b04563a"
+      }
+    },
+    "owner": "mf-forecast"
   }
 }
