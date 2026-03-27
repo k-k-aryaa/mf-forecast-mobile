@@ -3,7 +3,7 @@ import { View, Text, Image, StyleSheet } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useTheme } from '../context/ThemeContext';
 import api from '../api/api';
-import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
+import { useColors, spacing, radii, fontSizes, shadows, useResponsive } from '../theme';
 
 export default function Attribution({ fundId }) {
   const { isDark } = useTheme();
@@ -159,9 +159,10 @@ const styles = StyleSheet.create({
     borderRadius: radii.lg,
   },
   moversCard: {
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderRadius: radii.lg,
     padding: spacing.lg,
+    ...shadows.md,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -231,8 +232,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   barBg: {
-    height: 3,
-    borderRadius: 2,
+    height: 5,
+    borderRadius: 3,
     marginLeft: 34,
     overflow: 'hidden',
   },

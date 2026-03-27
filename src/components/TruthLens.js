@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Info } from 'lucide-react-native';
 import { useTheme } from '../context/ThemeContext';
 import api from '../api/api';
-import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
+import { useColors, spacing, radii, fontSizes, shadows, useResponsive } from '../theme';
 
 export default function TruthLens({ fundId }) {
   const { isDark } = useTheme();
@@ -195,10 +195,11 @@ export default function TruthLens({ fundId }) {
 
 const styles = StyleSheet.create({
   card: {
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderRadius: radii.lg,
     padding: spacing['2xl'],
     marginTop: spacing['2xl'],
+    ...shadows.md,
   },
   skeleton: {
     height: 150,

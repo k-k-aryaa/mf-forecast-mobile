@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { Home, Heart, Wrench, Info } from 'lucide-react-native';
-import { useColors } from '../theme';
+import { useTheme } from '../context/ThemeContext';
+import { useColors, shadows } from '../theme';
 
 import DashboardScreen from '../screens/DashboardScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
@@ -17,6 +18,24 @@ import DisclaimerScreen from '../screens/DisclaimerScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+const HomeStack = createNativeStackNavigator();
+
+function HomeStackScreen() {
+  const colors = useColors();
+
+  return (
+    <HomeStack.Navigator
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: colors.bgPrimary },
+        animation: 'slide_from_right',
+      }}
+    >
+      <HomeStack.Screen name="Dashboard" component={DashboardScreen} />
+      <HomeStack.Screen name="FundDetail" component={FundDetailScreen} />
+    </HomeStack.Navigator>
+  );
+}
 
 function MainTabs() {
   const colors = useColors();
@@ -28,10 +47,11 @@ function MainTabs() {
         tabBarStyle: {
           backgroundColor: colors.bottomBarBg,
           borderTopColor: colors.borderPrimary,
-          borderTopWidth: 1,
-          height: 60,
+          borderTopWidth: 1.5,
+          height: 64,
           paddingBottom: 8,
           paddingTop: 6,
+          ...shadows.sm,
         },
         tabBarActiveTintColor: colors.accentCyan,
         tabBarInactiveTintColor: colors.textMuted,
@@ -43,7 +63,7 @@ function MainTabs() {
     >
       <Tab.Screen
         name="Home"
-        component={DashboardScreen}
+        component={HomeStackScreen}
         options={{
           tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
         }}
@@ -75,9 +95,26 @@ function MainTabs() {
 
 export default function AppNavigator() {
   const colors = useColors();
+  const { isDark } = useTheme();
+
+  const navigationTheme = useMemo(() => {
+    const base = isDark ? DarkTheme : DefaultTheme;
+    return {
+      ...base,
+      colors: {
+        ...base.colors,
+        primary: colors.accentCyan,
+        background: colors.bgPrimary,
+        card: colors.bgCard,
+        text: colors.textPrimary,
+        border: colors.borderPrimary,
+        notification: colors.accentRed,
+      },
+    };
+  }, [isDark, colors]);
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={navigationTheme}>
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
@@ -86,7 +123,6 @@ export default function AppNavigator() {
         }}
       >
         <Stack.Screen name="Main" component={MainTabs} />
-        <Stack.Screen name="FundDetail" component={FundDetailScreen} />
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen name="AllIndices" component={AllIndicesScreen} />
         <Stack.Screen name="IndexDetail" component={IndexDetailScreen} />
@@ -95,3 +131,4 @@ export default function AppNavigator() {
     </NavigationContainer>
   );
 }
+

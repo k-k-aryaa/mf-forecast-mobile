@@ -5,9 +5,9 @@ export const darkColors = {
   // Backgrounds
   bgPrimary: '#050507',
   bgSecondary: '#0a0a0f',
-  bgCard: 'rgba(13, 13, 18, 0.85)',
-  bgCardHover: 'rgba(20, 20, 28, 0.9)',
-  bgElevated: '#15151a',
+  bgCard: 'rgba(18, 18, 28, 0.92)',
+  bgCardHover: 'rgba(25, 25, 35, 0.95)',
+  bgElevated: '#1a1a24',
 
   // Accents
   accentCyan: '#06b6d4',
@@ -26,20 +26,20 @@ export const darkColors = {
   textDim: '#475569',
 
   // Borders
-  borderPrimary: 'rgba(255, 255, 255, 0.1)',
-  borderSubtle: 'rgba(255, 255, 255, 0.05)',
-  borderGlow: 'rgba(6, 182, 212, 0.3)',
+  borderPrimary: 'rgba(255, 255, 255, 0.18)',
+  borderSubtle: 'rgba(255, 255, 255, 0.10)',
+  borderGlow: 'rgba(6, 182, 212, 0.5)',
 
   // Surfaces
-  surfaceHover: 'rgba(255, 255, 255, 0.05)',
-  surfaceActive: 'rgba(255, 255, 255, 0.1)',
-  borderHover: 'rgba(255, 255, 255, 0.15)',
-  borderActive: 'rgba(255, 255, 255, 0.2)',
+  surfaceHover: 'rgba(255, 255, 255, 0.07)',
+  surfaceActive: 'rgba(255, 255, 255, 0.12)',
+  borderHover: 'rgba(255, 255, 255, 0.22)',
+  borderActive: 'rgba(255, 255, 255, 0.28)',
 
   // Special
   glassBg: 'rgba(13, 13, 18, 0.6)',
   tickerBg: 'rgba(0, 0, 0, 0.2)',
-  indexCardBg: 'rgba(255, 255, 255, 0.03)',
+  indexCardBg: 'rgba(255, 255, 255, 0.05)',
   indexCardHover: 'rgba(255, 255, 255, 0.06)',
   headerBg: 'rgba(13, 14, 20, 0.6)',
   bottomBarBg: 'rgba(10, 10, 15, 0.9)',
@@ -51,21 +51,21 @@ export const darkColors = {
 };
 
 export const lightColors = {
-  // Backgrounds
+  // Backgrounds (fully opaque to prevent Android elevation shadow bleed)
   bgPrimary: '#ffffff',
   bgSecondary: '#f4f4f5',
-  bgCard: 'rgba(255, 255, 255, 0.85)',
-  bgCardHover: 'rgba(255, 255, 255, 1)',
+  bgCard: '#f8f8fa',
+  bgCardHover: '#ffffff',
   bgElevated: '#ffffff',
 
   // Accents
   accentCyan: '#0284c7',
   accentPurple: '#7c3aed',
   accentNeonGreen: '#059669',
-  accentNeonGreenDim: 'rgba(5, 150, 105, 0.1)',
+  accentNeonGreenDim: '#e6f5ef',
   accentGreen: '#10b981',
   accentRed: '#ef4444',
-  accentRedDim: 'rgba(239, 68, 68, 0.1)',
+  accentRedDim: '#fdecec',
   accentBlue: '#3b82f6',
 
   // Text
@@ -75,23 +75,23 @@ export const lightColors = {
   textDim: '#a1a1aa',
 
   // Borders
-  borderPrimary: 'rgba(9, 9, 11, 0.25)',
-  borderSubtle: 'rgba(9, 9, 11, 0.12)',
-  borderGlow: 'rgba(2, 132, 199, 0.2)',
+  borderPrimary: '#c4c4c7',
+  borderSubtle: '#dcdcdf',
+  borderGlow: '#7bbfe0',
 
   // Surfaces
-  surfaceHover: 'rgba(9, 9, 11, 0.04)',
-  surfaceActive: 'rgba(9, 9, 11, 0.08)',
-  borderHover: 'rgba(9, 9, 11, 0.35)',
-  borderActive: 'rgba(9, 9, 11, 0.45)',
+  surfaceHover: '#f5f5f6',
+  surfaceActive: '#ececed',
+  borderHover: '#c4c4c7',
+  borderActive: '#a8a8ac',
 
   // Special
-  glassBg: 'rgba(255, 255, 255, 0.75)',
-  tickerBg: 'rgba(255, 255, 255, 0.6)',
-  indexCardBg: 'rgba(9, 9, 11, 0.02)',
-  indexCardHover: 'rgba(9, 9, 11, 0.06)',
-  headerBg: 'rgba(255, 255, 255, 0.75)',
-  bottomBarBg: 'rgba(255, 255, 255, 0.95)',
+  glassBg: '#f5f5f5',
+  tickerBg: '#f8f8f8',
+  indexCardBg: '#fafafa',
+  indexCardHover: '#f3f3f4',
+  headerBg: '#f9f9f9',
+  bottomBarBg: '#fdfdfd',
 
   // Chart colors
   chartGreen: '#10b981',
@@ -125,23 +125,23 @@ export const radii = {
 export const shadows = {
   sm: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.15,
-    shadowRadius: 2,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   md: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 6,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
   },
   lg: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 32,
-    elevation: 12,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.4,
+    shadowRadius: 40,
+    elevation: 16,
   },
 };

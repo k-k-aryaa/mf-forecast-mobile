@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
 import api from '../api/api';
-import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
+import { useColors, spacing, radii, fontSizes, shadows, useResponsive } from '../theme';
 
 const CHART_HEIGHT = 200;
 
@@ -155,10 +155,11 @@ export default function NavChart({ fundId }) {
 
 const styles = StyleSheet.create({
   card: {
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderRadius: radii.lg,
     padding: spacing['2xl'],
     overflow: 'hidden',
+    ...shadows.md,
   },
   loadingBox: {
     height: CHART_HEIGHT,
@@ -181,8 +182,8 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   titleBar: {
-    width: 3,
-    height: 14,
+    width: 4,
+    height: 16,
     borderRadius: 2,
   },
   title: {

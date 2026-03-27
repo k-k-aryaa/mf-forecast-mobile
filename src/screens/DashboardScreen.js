@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Brain, HelpCircle, Clock, Timer, Search, LayoutDashboard, Sparkles } from 'lucide-react-native';
-import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
+import { useColors, spacing, radii, fontSizes, shadows, useResponsive } from '../theme';
 import Header from '../components/Header';
 import FundSelector from '../components/FundSelector';
 
@@ -45,14 +45,14 @@ export default function DashboardScreen() {
           <FundSelector selectedFundId={null} onSelect={handleFundSelect} />
 
           {/* Problem Section */}
-          <View style={[styles.problemSection, { borderColor: 'rgba(239, 68, 68, 0.15)' }]}>
+          <View style={[styles.problemSection, { borderColor: colors.accentRedDim, backgroundColor: colors.accentRedDim }]}>
             <HelpCircle size={scale(28)} color="#f59e0b" />
             <Text style={[styles.sectionTitle, { color: '#fbbf24', fontSize: scale(fontSizes.lg) }]}>The Problem: You're Flying Blind</Text>
             <Text style={[styles.sectionText, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>
               With stocks and ETFs, you can watch prices change every second. But with{' '}
               <Text style={{ color: colors.textPrimary, fontWeight: '600' }}>mutual funds</Text>? You invest your money and then… wait.
             </Text>
-            <View style={[styles.highlightBox, { borderLeftColor: colors.accentRed, backgroundColor: 'rgba(239, 68, 68, 0.06)' }]}>
+            <View style={[styles.highlightBox, { borderLeftColor: colors.accentRed, backgroundColor: colors.surfaceHover }]}>
               <Clock size={scale(16)} color={colors.accentRed} />
               <Text style={[styles.highlightText, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>
                 Official NAVs are published only <Text style={{ color: colors.textPrimary, fontWeight: '600' }}>once a day, after 9 PM</Text> — during the trading day, you have zero visibility.
@@ -83,7 +83,7 @@ export default function DashboardScreen() {
           </View>
 
           {/* CTA */}
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.ctaSection}
             onPress={() => scrollRef.current?.scrollTo({ y: 0, animated: true })}
             activeOpacity={0.7}
@@ -131,11 +131,12 @@ const styles = StyleSheet.create({
 
   // Problem
   problemSection: {
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderRadius: radii.lg,
     padding: spacing.lg,
     marginBottom: spacing.xl,
-    backgroundColor: 'rgba(239, 68, 68, 0.03)',
+    // backgroundColor set dynamically via inline style
+    ...shadows.md,
   },
   sectionTitle: {
     fontSize: fontSizes.lg,
@@ -153,7 +154,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: spacing.sm,
     padding: spacing.md,
-    borderLeftWidth: 3,
+    borderLeftWidth: 4,
     borderRadius: radii.sm,
     marginTop: spacing.sm,
   },

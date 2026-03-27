@@ -66,7 +66,7 @@ export default function FundDetailScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1 },
   scroll: { flex: 1 },
-  scrollContent: { paddingBottom: 100 },
+  scrollContent: { paddingBottom: 24 },
   content: {
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,

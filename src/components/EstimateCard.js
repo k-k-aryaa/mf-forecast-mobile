@@ -9,7 +9,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Heart, RefreshCw } from 'lucide-react-native';
 import api from '../api/api';
 import { useAuth } from '../context/AuthContext';
-import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
+import { useColors, spacing, radii, fontSizes, shadows, useResponsive } from '../theme';
 import ProcessingState from './ProcessingState';
 
 export default function EstimateCard({ fundId }) {
@@ -179,10 +179,11 @@ export default function EstimateCard({ fundId }) {
 
 const styles = StyleSheet.create({
   card: {
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderRadius: radii.lg,
     padding: spacing['2xl'],
     overflow: 'hidden',
+    ...shadows.md,
   },
   errorText: {
     textAlign: 'center',
