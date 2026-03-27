@@ -87,7 +87,7 @@ export default function TruthLens({ fundId }) {
 
       {/* Explanation - always visible */}
       <Text style={[styles.explanationText, { color: colors.textSecondary }]}>
-        Compares yesterday's AI prediction with the actual official NAV published by the AMC — see how accurate our predictions are.
+        Compares previous day's AI prediction with the actual official NAV published by the AMC — see how accurate our predictions are.
       </Text>
 
       {/* Comparison Grid */}

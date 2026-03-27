@@ -2,7 +2,7 @@
   "expo": {
     "name": "MF Forecast",
     "slug": "mf-forecast",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/playstore-icon.png",
     "userInterfaceStyle": "light",
