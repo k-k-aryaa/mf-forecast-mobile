@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View, Text, Image, StyleSheet } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
-import { Info } from 'lucide-react-native';
 import { useTheme } from '../context/ThemeContext';
 import api from '../api/api';
 import { useColors, spacing, radii, fontSizes, shadows, useResponsive } from '../theme';
@@ -9,7 +8,7 @@ import { useColors, spacing, radii, fontSizes, shadows, useResponsive } from '..
 export default function TruthLens({ fundId }) {
   const { isDark } = useTheme();
   const colors = useColors();
-  const [showInfo, setShowInfo] = useState(false);
+
   const { scale } = useResponsive();
 
   const lensIcon = isDark
@@ -77,26 +76,7 @@ export default function TruthLens({ fundId }) {
         <View style={styles.headerTitle}>
           <Image source={lensIcon} style={styles.titleIcon} resizeMode="contain" />
           <Text style={[styles.title, { color: colors.textPrimary }]}>TruthLens</Text>
-          <TouchableOpacity
-            onPress={() => setShowInfo(!showInfo)}
-            style={[styles.infoBtn, { backgroundColor: `${colors.accentCyan}15` }]}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          >
-            <Info size={14} color={colors.textMuted} />
-          </TouchableOpacity>
         </View>
-
-        {showInfo && (
-          <View style={[styles.infoTooltip, { backgroundColor: colors.bgElevated, borderColor: colors.borderPrimary }]}>
-            <Text style={[styles.infoTitle, { color: colors.accentCyan }]}>What is TruthLens?</Text>
-            <Text style={[styles.infoText, { color: colors.textSecondary }]}>
-              TruthLens compares yesterday's AI prediction with the actual official NAV published by the AMC — so you can see how accurate our predictions are and trust today's live estimates.
-            </Text>
-            <TouchableOpacity onPress={() => setShowInfo(false)} style={[styles.infoClose, { backgroundColor: `${colors.accentCyan}1A`, borderColor: `${colors.accentCyan}33` }]}>
-              <Text style={[styles.infoCloseText, { color: colors.accentCyan }]}>Got it</Text>
-            </TouchableOpacity>
-          </View>
-        )}
         <View style={[styles.streakBadge, { backgroundColor: colors.surfaceHover }]}>
           <Image source={targetIcon} style={styles.streakIcon} resizeMode="contain" />
           <Text style={[styles.streakText, { color: colors.textSecondary }]}>
@@ -104,6 +84,11 @@ export default function TruthLens({ fundId }) {
           </Text>
         </View>
       </View>
+
+      {/* Explanation - always visible */}
+      <Text style={[styles.explanationText, { color: colors.textSecondary }]}>
+        Compares yesterday's AI prediction with the actual official NAV published by the AMC — see how accurate our predictions are.
+      </Text>
 
       {/* Comparison Grid */}
       <View style={styles.comparisonGrid}>
@@ -324,39 +309,9 @@ const styles = StyleSheet.create({
   footerDate: {
     fontSize: fontSizes.xs,
   },
-  infoBtn: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: spacing.xs,
-  },
-  infoTooltip: {
-    borderWidth: 1,
-    borderRadius: radii.md,
-    padding: spacing.lg,
-    marginBottom: spacing.md,
-  },
-  infoTitle: {
-    fontSize: fontSizes.sm,
-    fontWeight: '700',
-    marginBottom: spacing.sm,
-  },
-  infoText: {
+  explanationText: {
     fontSize: fontSizes.sm,
     lineHeight: 18,
-    marginBottom: spacing.md,
-  },
-  infoClose: {
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.lg,
-    borderRadius: radii.sm,
-    borderWidth: 1,
-    alignSelf: 'flex-start',
-  },
-  infoCloseText: {
-    fontSize: fontSizes.xs,
-    fontWeight: '600',
+    marginBottom: spacing.lg,
   },
 });

@@ -44,7 +44,7 @@ export default function AboutScreen() {
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.bgPrimary }]} edges={['top']}>
       <Header />
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={[styles.content, maxContentWidth, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}>
+        <View style={[styles.content, maxContentWidth]}>
 
           {/* Hero */}
           <Text style={[styles.intro, { color: colors.textSecondary, fontSize: scale(fontSizes.base) }]}>
@@ -176,11 +176,10 @@ export default function AboutScreen() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1 },
-  scrollContent: { paddingHorizontal: spacing.lg, paddingVertical: spacing.lg, paddingBottom: 100 },
+  scrollContent: { paddingHorizontal: spacing.md, paddingVertical: spacing.md, paddingBottom: 100 },
   content: {
-    borderWidth: 1,
-    borderRadius: radii.xl,
-    padding: spacing['2xl'],
+    paddingHorizontal: spacing.sm,
+    paddingTop: spacing.md,
   },
   intro: { fontSize: fontSizes.base, lineHeight: 22, textAlign: 'center', marginBottom: spacing['2xl'] },
 

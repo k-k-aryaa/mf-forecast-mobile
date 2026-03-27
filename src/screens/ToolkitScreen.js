@@ -40,15 +40,28 @@ function InvestmentTips() {
         <Clock size={scale(20)} color={colors.accentCyan} />
         <Text style={[styles.cardTitle, { color: colors.textPrimary, fontSize: scale(fontSizes.base) }]}>Want Same Day NAV?</Text>
       </View>
-      <View style={styles.tipRow}>
-        <Text style={[styles.tipLabel, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>Before 2:00 PM</Text>
+      <Text style={[styles.tipExplainer, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>
+        When you invest in a mutual fund, the NAV (price per unit) you get depends on when your order is placed. Miss the cutoff and your order gets the next business day's NAV instead.
+      </Text>
+
+      <Text style={[styles.tipSectionHeader, { color: colors.accentCyan, fontSize: scale(fontSizes.xs) }]}>BROKER PLATFORMS (EARLIER CUTOFF)</Text>
+      <View style={[styles.tipRow, { backgroundColor: colors.surfaceHover, borderRadius: radii.md, padding: spacing.md }]}>
+        <Text style={[styles.tipLabel, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>Submit before 2:00 PM</Text>
         <Text style={[styles.tipValue, { color: colors.accentCyan, fontSize: scale(fontSizes.lg) }]}>{cutoff1}</Text>
-        <Text style={[styles.tipPlatforms, { color: colors.textMuted, fontSize: scale(fontSizes.xs) }]}>Groww, Zerodha</Text>
+        <Text style={[styles.tipPlatforms, { color: colors.textMuted, fontSize: scale(fontSizes.xs) }]}>Groww, Zerodha, Paytm Money</Text>
       </View>
-      <View style={styles.tipRow}>
-        <Text style={[styles.tipLabel, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>Between 2-3 PM</Text>
-        <Text style={[styles.tipValue, { color: colors.accentCyan, fontSize: scale(fontSizes.lg) }]}>{cutoff2}</Text>
-        <Text style={[styles.tipPlatforms, { color: colors.textMuted, fontSize: scale(fontSizes.xs) }]}>MFCentral, AMC</Text>
+
+      <Text style={[styles.tipSectionHeader, { color: colors.accentPurple, fontSize: scale(fontSizes.xs) }]}>DIRECT / AMC PORTALS (SEBI CUTOFF)</Text>
+      <View style={[styles.tipRow, { backgroundColor: colors.surfaceHover, borderRadius: radii.md, padding: spacing.md }]}>
+        <Text style={[styles.tipLabel, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>Submit before 3:00 PM</Text>
+        <Text style={[styles.tipValue, { color: colors.accentPurple, fontSize: scale(fontSizes.lg) }]}>{cutoff2}</Text>
+        <Text style={[styles.tipPlatforms, { color: colors.textMuted, fontSize: scale(fontSizes.xs) }]}>MFCentral, AMC websites, MFUtility</Text>
+      </View>
+
+      <View style={[styles.tipNote, { backgroundColor: `${colors.accentCyan}10`, borderLeftColor: colors.accentCyan }]}>
+        <Text style={[styles.tipNoteText, { color: colors.textSecondary, fontSize: scale(fontSizes.xs) }]}>
+          💡 <Text style={{ fontWeight: '600', color: colors.textPrimary }}>Why it matters:</Text> If you see your fund is up today on MF Forecast, placing your order before cutoff locks in today's (lower) NAV. After cutoff, you'll get tomorrow's NAV which could be higher.
+        </Text>
       </View>
     </View>
   );
@@ -330,10 +343,14 @@ const styles = StyleSheet.create({
   cardHeader: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.md },
   cardTitle: { fontSize: fontSizes.base, fontWeight: '700' },
   // Tips
+  tipExplainer: { fontSize: fontSizes.sm, lineHeight: 20, marginBottom: spacing.md },
+  tipSectionHeader: { fontSize: fontSizes.xs, fontWeight: '700', letterSpacing: 0.5, marginBottom: spacing.sm, marginTop: spacing.sm },
   tipRow: { marginBottom: spacing.md },
   tipLabel: { fontSize: fontSizes.sm, fontWeight: '600', marginBottom: 2 },
   tipValue: { fontSize: fontSizes.lg, fontWeight: '700', fontFamily: 'monospace' },
   tipPlatforms: { fontSize: fontSizes.xs, marginTop: 2 },
+  tipNote: { borderLeftWidth: 3, borderRadius: radii.sm, padding: spacing.md, marginTop: spacing.sm },
+  tipNoteText: { fontSize: fontSizes.xs, lineHeight: 18 },
   // Holiday
   nextHoliday: { borderWidth: 1, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md },
   nextLabel: { fontSize: fontSizes.xs, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
