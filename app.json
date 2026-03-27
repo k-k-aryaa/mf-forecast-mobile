@@ -4,7 +4,7 @@
     "slug": "mf-forecast",
     "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/logo_light.png",
+    "icon": "./assets/playstore-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -17,7 +17,7 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/logo_light.png"
+        "foregroundImage": "./assets/playstore-icon.png"
       },
       "package": "com.mfforecast.app",
       "versionCode": 1
