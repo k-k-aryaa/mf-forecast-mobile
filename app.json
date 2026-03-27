@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "mf-forecast-mobile",
+    "name": "MF Forecast",
     "slug": "mf-forecast",
     "version": "1.0.1",
     "orientation": "portrait",
@@ -17,9 +17,7 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "foregroundImage": "./assets/logo_light.png"
       },
       "package": "com.mfforecast.app",
       "versionCode": 1
