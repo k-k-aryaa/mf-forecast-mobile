@@ -8,6 +8,9 @@ import {
   Modal,
   StyleSheet,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
 } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { Search, ChevronDown, Check, Sparkles } from 'lucide-react-native';
@@ -90,9 +93,10 @@ export default function FundSelector({ selectedFundId, onSelect }) {
       )}
 
       {/* Fund picker modal */}
-      <Modal visible={isOpen} animationType="slide" transparent>
+      <Modal visible={isOpen} animationType="slide" transparent statusBarTranslucent>
         <View style={styles.modalOverlay}>
-          <View
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
             style={[
               styles.modalContent,
               { backgroundColor: colors.bgElevated, borderColor: colors.borderPrimary },
@@ -120,6 +124,7 @@ export default function FundSelector({ selectedFundId, onSelect }) {
                 onChangeText={setSearchQuery}
                 style={[styles.searchInput, { color: colors.textPrimary }]}
                 autoFocus
+                blurOnSubmit={false}
               />
             </View>
 
@@ -129,13 +134,19 @@ export default function FundSelector({ selectedFundId, onSelect }) {
               <FlatList
                 data={filteredFunds}
                 keyExtractor={(item) => item.id.toString()}
+                keyboardShouldPersistTaps="always"
+                removeClippedSubviews={false}
                 renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={[
+                  <Pressable
+                    style={({ pressed }) => [
                       styles.fundOption,
                       {
                         backgroundColor:
-                          item.id === selectedFundId ? `${colors.accentCyan}12` : 'transparent',
+                          item.id === selectedFundId
+                            ? `${colors.accentCyan}12`
+                            : pressed
+                            ? `${colors.accentCyan}08`
+                            : 'transparent',
                         borderBottomColor: colors.borderSubtle,
                       },
                     ]}
@@ -160,15 +171,16 @@ export default function FundSelector({ selectedFundId, onSelect }) {
                       )}
                     </View>
                     {item.id === selectedFundId && <Check size={18} color={colors.accentCyan} />}
-                  </TouchableOpacity>
+                  </Pressable>
                 )}
                 ListEmptyComponent={
                   <Text style={[styles.emptyText, { color: colors.textMuted }]}>No funds found</Text>
                 }
                 style={styles.list}
+                contentContainerStyle={{ paddingBottom: 40 }}
               />
             )}
-          </View>
+          </KeyboardAvoidingView>
         </View>
       </Modal>
     </View>
@@ -264,8 +276,9 @@ const styles = StyleSheet.create({
     borderTopRightRadius: radii.xl,
     borderWidth: 1,
     borderBottomWidth: 0,
-    maxHeight: '80%',
+    height: '90%', // Fixed percentage height ensures it stays up top
     paddingTop: spacing.lg,
+    overflow: 'hidden',
   },
   modalContentTablet: {
     maxWidth: 600,
@@ -274,7 +287,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: radii.xl,
     borderBottomRightRadius: radii.xl,
     borderBottomWidth: 1,
-    maxHeight: '70%',
+    height: '70%',
   },
   modalHeader: {
     flexDirection: 'row',
@@ -307,6 +320,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
   },
   list: {
+    flex: 1, // Ensure the list takes all remaining height to handle taps correctly
     paddingHorizontal: spacing.lg,
   },
   fundOption: {

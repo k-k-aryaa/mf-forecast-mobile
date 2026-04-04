@@ -29,10 +29,8 @@ export default function TruthLens({ fundId }) {
 
   const formatPct = (value) => {
     if (value == null) return null;
-    const absVal = Math.abs(value);
-    const decimals = absVal < 0.01 ? 4 : 2;
     const sign = value >= 0 ? '+' : '';
-    return sign + value.toFixed(decimals) + '%';
+    return sign + value.toFixed(2) + '%';
   };
 
   const getMagnitudeColor = (magnitude) => {
