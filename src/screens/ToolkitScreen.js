@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet, TextInput } from 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Linking from 'expo-linking';
 import { useQuery } from '@tanstack/react-query';
-import { Clock, Calendar, ExternalLink, ChevronDown, ChevronUp, BookOpen } from 'lucide-react-native';
+import { Clock, Calendar, ExternalLink, ChevronDown, ChevronUp, BookOpen, Lightbulb } from 'lucide-react-native';
 import api from '../api/api';
 import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
 import Header from '../components/Header';
@@ -58,9 +58,10 @@ function InvestmentTips() {
         <Text style={[styles.tipPlatforms, { color: colors.textMuted, fontSize: scale(fontSizes.xs) }]}>MFCentral, AMC websites, MFUtility</Text>
       </View>
 
-      <View style={[styles.tipNote, { backgroundColor: `${colors.accentCyan}10`, borderLeftColor: colors.accentCyan }]}>
-        <Text style={[styles.tipNoteText, { color: colors.textSecondary, fontSize: scale(fontSizes.xs) }]}>
-          💡 <Text style={{ fontWeight: '600', color: colors.textPrimary }}>Why it matters:</Text> If you see your fund is up today on MF Forecast, placing your order before cutoff locks in today's (lower) NAV. After cutoff, you'll get tomorrow's NAV which could be higher.
+      <View style={[styles.tipNote, { backgroundColor: `${colors.accentCyan}10`, borderLeftColor: colors.accentCyan, flexDirection: 'row', gap: scale(8), alignItems: 'flex-start' }]}>
+        <Lightbulb size={scale(16)} color={colors.accentCyan} style={{ marginTop: 2 }} />
+        <Text style={[styles.tipNoteText, { color: colors.textSecondary, fontSize: scale(fontSizes.xs), flex: 1 }]}>
+          <Text style={{ fontWeight: '600', color: colors.textPrimary }}>Why it matters:</Text> If you see your fund is up today on MF Forecast, placing your order before cutoff locks in today's (lower) NAV. After cutoff, you'll get tomorrow's NAV which could be higher.
         </Text>
       </View>
     </View>

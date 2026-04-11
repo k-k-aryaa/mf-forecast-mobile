@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, ScrollView, StyleSheet, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
+import { Link } from 'lucide-react-native';
 import { useTheme } from '../context/ThemeContext';
 
 const AMC_LINKS = {
@@ -76,7 +77,7 @@ const UsefulLinks = () => {
     return (
         <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
             <View style={styles.header}>
-                <Text style={{ fontSize: 16 }}>🔗</Text>
+                <Link size={18} color={colors.textPrimary} style={{ marginRight: 8 }} />
                 <Text style={[styles.title, { color: colors.textPrimary }]}>Useful Links</Text>
             </View>
 

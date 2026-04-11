@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { Brain, HelpCircle, Clock, Timer, Search, LayoutDashboard, Sparkles } from 'lucide-react-native';
+import { Brain, HelpCircle, Clock, Timer, Search, LayoutDashboard, Sparkles, Rocket } from 'lucide-react-native';
 import { useColors, spacing, radii, fontSizes, shadows, useResponsive } from '../theme';
 import Header from '../components/Header';
 import FundSelector from '../components/FundSelector';
@@ -91,9 +91,12 @@ export default function DashboardScreen() {
             <Text style={[styles.ctaText, { color: colors.textMuted, fontSize: scale(fontSizes.sm) }]}>
               Ready to see your fund's real-time performance?
             </Text>
-            <Text style={[styles.ctaHint, { color: colors.accentCyan, fontSize: scale(fontSizes.base) }]}>
-              🚀 Select a Fund Above to Get Started
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: scale(6) }}>
+              <Rocket size={scale(20)} color={colors.accentCyan} />
+              <Text style={[styles.ctaHint, { color: colors.accentCyan, fontSize: scale(fontSizes.base) }]}>
+                Select a Fund Above to Get Started
+              </Text>
+            </View>
           </TouchableOpacity>
         </View>
       </ScrollView>

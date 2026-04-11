@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Linking, TouchableOpacity } from 'react-native';
+import { Clock } from 'lucide-react-native';
 import { useTheme } from '../context/ThemeContext';
 
 const InvestmentTips = () => {
@@ -26,7 +27,7 @@ const InvestmentTips = () => {
     return (
         <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
             <View style={styles.header}>
-                <Text style={{ fontSize: 16 }}>⏰</Text>
+                <Clock size={18} color={colors.textPrimary} />
                 <Text style={[styles.title, { color: colors.textPrimary }]}>Want Same Day NAV?</Text>
             </View>
 

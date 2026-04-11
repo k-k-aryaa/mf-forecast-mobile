@@ -6,7 +6,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Heart, RefreshCw } from 'lucide-react-native';
+import { Heart, RefreshCw, AlertTriangle } from 'lucide-react-native';
 import api from '../api/api';
 import { useAuth } from '../context/AuthContext';
 import { useColors, spacing, radii, fontSizes, shadows, useResponsive } from '../theme';
@@ -73,7 +73,7 @@ export default function EstimateCard({ fundId }) {
   if (error) {
     return (
       <View style={[styles.card, { backgroundColor: colors.accentRedDim, borderColor: colors.accentRed }]}>
-        <Text style={{ fontSize: 24, textAlign: 'center', marginBottom: 8 }}>⚠️</Text>
+        <AlertTriangle size={scale(32)} color={colors.accentRed} style={{ alignSelf: 'center', marginBottom: 8 }} />
         <Text style={[styles.errorText, { color: colors.accentRed }]}>Signal Lost</Text>
       </View>
     );

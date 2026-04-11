@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
+import { BarChart3 } from 'lucide-react-native';
 import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
 import api from '../api/api';
 import { useColors, spacing, radii, fontSizes, shadows, useResponsive } from '../theme';
@@ -32,7 +33,7 @@ export default function NavChart({ fundId }) {
   if (error || !data?.nav_history?.length) {
     return (
       <View style={[styles.card, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}>
-        <Text style={{ fontSize: 24, textAlign: 'center', marginBottom: 8 }}>📊</Text>
+        <BarChart3 size={scale(32)} color={colors.textMuted} style={{ alignSelf: 'center', marginBottom: 8 }} />
         <Text style={[styles.emptyText, { color: colors.textMuted }]}>
           {error ? 'Unavailable' : 'No Data Stream'}
         </Text>

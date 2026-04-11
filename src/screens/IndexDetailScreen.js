@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { ArrowLeft } from 'lucide-react-native';
+import { ArrowLeft, Activity } from 'lucide-react-native';
 import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
 import api from '../api/api';
 import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
@@ -175,7 +175,7 @@ export default function IndexDetailScreen() {
             <ActivityIndicator size="large" color={colors.accentCyan} style={{ marginTop: 40 }} />
           ) : chartData.length === 0 ? (
             <View style={styles.emptyChart}>
-              <Text style={{ fontSize: 24, marginBottom: 8 }}>📊</Text>
+              <Activity size={scale(32)} color={colors.textMuted} style={{ marginBottom: 8 }} />
               <Text style={[styles.emptyText, { color: colors.textMuted }]}>No historical data</Text>
             </View>
           ) : (

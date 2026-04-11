@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { Calendar } from 'lucide-react-native';
 import api from '../api';
 import { useTheme } from '../context/ThemeContext';
 
@@ -31,7 +32,7 @@ const HolidayCalendar = () => {
         return (
             <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
                 <View style={styles.header}>
-                    <Text style={{ fontSize: 16 }}>📅</Text>
+                    <Calendar size={18} color={colors.textPrimary} />
                     <Text style={[styles.title, { color: colors.textPrimary }]}>Trading Holidays</Text>
                 </View>
                 <Text style={{ color: colors.textMuted, padding: 16 }}>Loading holidays...</Text>
@@ -42,7 +43,7 @@ const HolidayCalendar = () => {
     return (
         <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.borderPrimary }]}>
             <View style={styles.header}>
-                <Text style={{ fontSize: 16 }}>📅</Text>
+                <Calendar size={18} color={colors.textPrimary} />
                 <Text style={[styles.title, { color: colors.textPrimary }]}>Trading Holidays 2026</Text>
             </View>
 
