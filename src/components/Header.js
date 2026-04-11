@@ -66,8 +66,7 @@ export default function Header() {
 
   const statusColor = marketStatus === 'OPEN' ? colors.accentNeonGreen : colors.textMuted;
 
-  const logoDark = require('../assets/logo.png');
-  const logoLight = require('../assets/logo_light.png');
+  const logo = require('../assets/logo_soft.png');
 
   return (
     <View style={[styles.header, { backgroundColor: colors.headerBg, borderBottomColor: colors.borderPrimary }]}>
@@ -75,7 +74,7 @@ export default function Header() {
         {/* Logo */}
         <View style={styles.brand}>
           <Image
-            source={isDark ? logoDark : logoLight}
+            source={logo}
             style={[styles.logo, { width: scale(32), height: scale(32) }]}
             resizeMode="contain"
           />

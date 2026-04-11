@@ -36,8 +36,7 @@ export default function LoginScreen() {
   const navigation = useNavigation();
   const { isTablet, scale, maxContentWidth } = useResponsive();
 
-  const logoDark = require('../assets/logo.png');
-  const logoLight = require('../assets/logo_light.png');
+  const logo = require('../assets/logo_soft.png');
 
   const clearErrors = () => { setError(null); setSuccessMsg(null); };
 
@@ -131,7 +130,7 @@ export default function LoginScreen() {
             {/* Branding */}
             <View style={styles.branding}>
               <Image
-                source={isDark ? logoDark : logoLight}
+                source={logo}
                 style={[styles.brandLogo, { width: scale(72), height: scale(72) }]}
                 resizeMode="contain"
               />
