@@ -33,7 +33,7 @@ export default function AllIndicesScreen() {
       }
     };
     fetchIndices();
-    const interval = setInterval(fetchIndices, 60000);
+    const interval = setInterval(fetchIndices, 5000);
     return () => clearInterval(interval);
   }, []);
 

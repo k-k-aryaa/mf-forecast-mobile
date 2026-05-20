@@ -41,6 +41,8 @@ export default function IndexDetailScreen() {
       } catch (e) {}
     };
     fetch();
+    const interval = setInterval(fetch, 5000);
+    return () => clearInterval(interval);
   }, [symbol]);
 
   // Fetch history
