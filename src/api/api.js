@@ -120,6 +120,12 @@ export const api = {
 
   // Account
   deleteAccount: () => request('/auth/me', { method: 'DELETE' }),
+
+  // Report Issue / Feedback
+  reportIssue: (data) => request('/report-issue', {
+    method: 'POST',
+    body: data,
+  }),
 };
 
 export default api;

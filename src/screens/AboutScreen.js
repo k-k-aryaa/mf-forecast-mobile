@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { Zap, Brain, BarChart3, ShieldCheck, TrendingUp, Eye, Target, Code2, AlertTriangle, Trash2 } from 'lucide-react-native';
+import { Zap, Brain, BarChart3, ShieldCheck, TrendingUp, Eye, Target, Code2, AlertTriangle, Trash2, Flag, MessageSquare, Mail } from 'lucide-react-native';
 import * as Linking from 'expo-linking';
 import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
 import Header from '../components/Header';
+import ReportIssueModal from '../components/ReportIssueModal';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/api';
 
@@ -14,6 +15,8 @@ export default function AboutScreen() {
   const navigation = useNavigation();
   const { user, logout } = useAuth();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const { isTablet, scale, maxContentWidth } = useResponsive();
 
   const handleDeleteAccount = () => {
@@ -129,6 +132,43 @@ export default function AboutScreen() {
             </View>
           </TouchableOpacity>
 
+          {/* Contact & Feedback Section */}
+          <View style={[styles.feedbackSection, { borderColor: 'rgba(139, 92, 246, 0.15)' }]}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: spacing.sm }}>
+              <View style={[styles.sectionIconWrap, { backgroundColor: 'rgba(139, 92, 246, 0.15)' }]}>
+                <Mail size={scale(24)} color={colors.accentPurple} />
+              </View>
+              <Text style={[styles.sectionTitle, { color: colors.accentPurple, marginTop: 0, marginBottom: 0, fontSize: scale(fontSizes.lg) }]}>Contact & Feedback</Text>
+            </View>
+            <Text style={[styles.sectionText, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>
+              Help us build a better experience. Report data issues or share your thoughts and suggestions.
+            </Text>
+            <View style={[styles.feedbackBtnsRow, isTablet && { flexDirection: 'row' }]}>
+              <TouchableOpacity
+                style={[styles.feedbackBtn, { backgroundColor: `${colors.accentCyan}12`, borderColor: `${colors.accentCyan}40` }]}
+                onPress={() => setReportOpen(true)}
+                activeOpacity={0.7}
+              >
+                <Flag size={scale(18)} color={colors.accentCyan} />
+                <View style={styles.feedbackBtnTextWrap}>
+                  <Text style={[styles.feedbackBtnTitle, { color: colors.textPrimary, fontSize: scale(fontSizes.sm) }]}>Report an Issue</Text>
+                  <Text style={[styles.feedbackBtnDesc, { color: colors.textMuted, fontSize: scale(fontSizes.xs) }]}>Data wrong or missing? Let us know.</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.feedbackBtn, { backgroundColor: `${colors.accentPurple}12`, borderColor: `${colors.accentPurple}40` }]}
+                onPress={() => setFeedbackOpen(true)}
+                activeOpacity={0.7}
+              >
+                <MessageSquare size={scale(18)} color={colors.accentPurple} />
+                <View style={styles.feedbackBtnTextWrap}>
+                  <Text style={[styles.feedbackBtnTitle, { color: colors.textPrimary, fontSize: scale(fontSizes.sm) }]}>Give Feedback</Text>
+                  <Text style={[styles.feedbackBtnDesc, { color: colors.textMuted, fontSize: scale(fontSizes.xs) }]}>Share ideas or suggestions with us.</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+
           {/* Developer Section */}
           <View style={[styles.devSection, { borderTopColor: colors.borderSubtle }]}>
             <Text style={[styles.devTitle, { color: colors.textPrimary, fontSize: scale(fontSizes.lg) }]}>Crafted With Passion</Text>
@@ -170,6 +210,19 @@ export default function AboutScreen() {
 
         </View>
       </ScrollView>
+
+      {/* Report Issue Modal */}
+      <ReportIssueModal
+        isOpen={reportOpen}
+        onClose={() => setReportOpen(false)}
+        mode="issue"
+      />
+      {/* Feedback Modal */}
+      <ReportIssueModal
+        isOpen={feedbackOpen}
+        onClose={() => setFeedbackOpen(false)}
+        mode="feedback"
+      />
     </SafeAreaView>
   );
 }
@@ -347,5 +400,36 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: radii.md,
     minWidth: 200,
+  },
+
+  // Feedback section
+  feedbackSection: {
+    borderWidth: 1,
+    borderRadius: radii.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.xl,
+    backgroundColor: 'rgba(139, 92, 246, 0.03)',
+  },
+  feedbackBtnsRow: {
+    gap: spacing.md,
+    marginTop: spacing.md,
+  },
+  feedbackBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    padding: spacing.lg,
+    borderRadius: radii.md,
+    borderWidth: 1,
+  },
+  feedbackBtnTextWrap: {
+    flex: 1,
+  },
+  feedbackBtnTitle: {
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  feedbackBtnDesc: {
+    lineHeight: 16,
   },
 });

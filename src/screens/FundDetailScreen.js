@@ -1,8 +1,9 @@
-import React from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { useColors, spacing, useResponsive } from '../theme';
+import { Flag } from 'lucide-react-native';
+import { useColors, spacing, radii, fontSizes, useResponsive } from '../theme';
 import Header from '../components/Header';
 import MarketTicker from '../components/MarketTicker';
 import FundSelector from '../components/FundSelector';
@@ -10,13 +11,15 @@ import EstimateCard from '../components/EstimateCard';
 import NavChart from '../components/NavChart';
 import Attribution from '../components/Attribution';
 import TruthLens from '../components/TruthLens';
+import ReportIssueModal from '../components/ReportIssueModal';
 
 export default function FundDetailScreen() {
   const route = useRoute();
   const navigation = useNavigation();
   const colors = useColors();
   const { fundId } = route.params;
-  const { isTablet, maxContentWidth } = useResponsive();
+  const { isTablet, scale, maxContentWidth } = useResponsive();
+  const [reportOpen, setReportOpen] = useState(false);
 
   const handleFundChange = (newFundId) => {
     navigation.setParams({ fundId: newFundId });
@@ -34,6 +37,31 @@ export default function FundDetailScreen() {
 
         <View style={[styles.content, maxContentWidth]}>
           <FundSelector selectedFundId={fundId} onSelect={handleFundChange} />
+
+          {/* Report Issue Button — aligned right, matching frontend */}
+          <View style={styles.reportRow}>
+            <TouchableOpacity
+              style={[
+                styles.reportBtn,
+                {
+                  backgroundColor: `${colors.accentCyan}12`,
+                  borderColor: `${colors.accentCyan}40`,
+                },
+              ]}
+              onPress={() => setReportOpen(true)}
+              activeOpacity={0.7}
+            >
+              <Flag size={scale(12)} color={colors.accentCyan} />
+              <Text
+                style={[
+                  styles.reportBtnText,
+                  { color: colors.accentCyan, fontSize: scale(fontSizes.xs) },
+                ]}
+              >
+                Report Issue
+              </Text>
+            </TouchableOpacity>
+          </View>
 
           {isTablet ? (
             /* Tablet: side-by-side layout for estimate + truth lens */
@@ -59,6 +87,14 @@ export default function FundDetailScreen() {
           )}
         </View>
       </ScrollView>
+
+      {/* Report Issue Modal */}
+      <ReportIssueModal
+        isOpen={reportOpen}
+        onClose={() => setReportOpen(false)}
+        fundId={fundId}
+        mode="issue"
+      />
     </SafeAreaView>
   );
 }
@@ -80,5 +116,23 @@ const styles = StyleSheet.create({
   },
   tabletTopCard: {
     flex: 1,
+  },
+  reportRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: spacing.sm,
+    marginBottom: spacing.xs,
+  },
+  reportBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.md,
+    borderRadius: radii.full,
+    borderWidth: 1,
+  },
+  reportBtnText: {
+    fontWeight: '600',
   },
 });
