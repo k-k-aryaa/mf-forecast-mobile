@@ -11,15 +11,11 @@ export default function DashboardScreen() {
   const colors = useColors();
   const navigation = useNavigation();
   const scrollRef = useRef(null);
-  const videoRef = useRef(null);
+  const videoY = useRef(0);
   const { isTablet, scale, maxContentWidth } = useResponsive();
 
   const handleWatchDemo = () => {
-    videoRef.current?.measureLayout(
-      scrollRef.current?.getInnerViewNode?.(),
-      (_x, y) => scrollRef.current?.scrollTo({ y: y - 20, animated: true }),
-      () => {}
-    );
+    scrollRef.current?.scrollTo({ y: videoY.current - 20, animated: true });
   };
 
   const handleFundSelect = (fundId) => {
@@ -86,7 +82,7 @@ export default function DashboardScreen() {
           </View>
 
           {/* Video Demo Section */}
-          <View ref={videoRef} style={[styles.videoSection, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}>
+          <View onLayout={(e) => { videoY.current = e.nativeEvent.layout.y; }} style={[styles.videoSection, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}>
             <View style={styles.videoAccentLine} />
             <View style={styles.videoHeader}>
               <Text style={[styles.videoTitle, { color: colors.textPrimary, fontSize: scale(fontSizes.lg) }]}>See It In Action</Text>
