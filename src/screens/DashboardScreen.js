@@ -63,8 +63,8 @@ export default function DashboardScreen() {
 
           {/* Problem Section */}
           <View style={[styles.problemSection, { borderColor: colors.accentRedDim, backgroundColor: colors.accentRedDim }]}>
-            <HelpCircle size={scale(28)} color="#f59e0b" />
-            <Text style={[styles.sectionTitle, { color: '#fbbf24', fontSize: scale(fontSizes.lg) }]}>The Problem: You're Flying Blind</Text>
+            <HelpCircle size={scale(28)} color={colors.accentAmber} />
+            <Text style={[styles.sectionTitle, { color: colors.accentYellow, fontSize: scale(fontSizes.lg) }]}>The Problem: You're Flying Blind</Text>
             <Text style={[styles.sectionText, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>
               With stocks and ETFs, you can watch prices change every second. But with{' '}
               <Text style={{ color: colors.textPrimary, fontWeight: '600' }}>mutual funds</Text>? You invest your money and then… wait.
@@ -83,7 +83,7 @@ export default function DashboardScreen() {
 
           {/* Video Demo Section */}
           <View onLayout={(e) => { videoY.current = e.nativeEvent.layout.y; }} style={[styles.videoSection, { backgroundColor: colors.bgCard, borderColor: colors.borderPrimary }]}>
-            <View style={styles.videoAccentLine} />
+            <View style={[styles.videoAccentLine, { backgroundColor: colors.accentCyan }]} />
             <View style={styles.videoHeader}>
               <Text style={[styles.videoTitle, { color: colors.textPrimary, fontSize: scale(fontSizes.lg) }]}>See It In Action</Text>
               <Text style={[styles.videoSubtitle, { color: colors.textSecondary, fontSize: scale(fontSizes.xs) }]}>
@@ -101,7 +101,7 @@ export default function DashboardScreen() {
                     <View style={styles.videoPlayCircle}>
                       <Play size={scale(28)} color="#fff" fill="#fff" />
                     </View>
-                    <Text style={[styles.videoPlayLabel, { fontSize: scale(fontSizes.xs) }]}>Tap to play on YouTube</Text>
+                    <Text style={[styles.videoPlayLabel, { color: colors.textSecondary, fontSize: scale(fontSizes.xs) }]}>Tap to play on YouTube</Text>
                   </View>
                 </View>
               </View>
@@ -114,8 +114,8 @@ export default function DashboardScreen() {
             {[
               { icon: Timer, text: 'Traditional platforms show NAV once a day. We estimate it every minute.', color: colors.accentCyan },
               { icon: Brain, text: 'Powered by AI models trained on real historical data.', color: colors.accentPurple },
-              { icon: Search, text: 'Full transparency — past accuracy as proof, not promises.', color: '#10b981' },
-              { icon: LayoutDashboard, text: 'Deep portfolio insights with heatmaps and attribution.', color: '#fbbf24' },
+              { icon: Search, text: 'Full transparency — past accuracy as proof, not promises.', color: colors.accentGreen },
+              { icon: LayoutDashboard, text: 'Deep portfolio insights with heatmaps and attribution.', color: colors.accentYellow },
             ].map((item, i) => (
               <View key={i} style={[styles.whyRow, isTablet && styles.whyRowTablet]}>
                 <View style={[styles.whyIconWrap, { backgroundColor: `${item.color}1A`, width: scale(36), height: scale(36) }]}>
@@ -297,7 +297,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 2,
-    backgroundColor: '#06b6d4',
   },
   videoHeader: {
     alignItems: 'center',
@@ -310,8 +309,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#8b5cf6',
-    ...shadows.md,
   },
   videoTitle: {
     fontWeight: '700',
@@ -351,7 +348,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   videoPlayLabel: {
-    color: '#94a3b8',
     fontWeight: '500',
   },
 });

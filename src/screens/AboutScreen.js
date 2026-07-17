@@ -84,7 +84,7 @@ export default function AboutScreen() {
                 { icon: Zap, title: 'Live NAV Estimates', desc: "See your fund's estimated NAV updating in real-time throughout the trading day.", color: colors.accentCyan },
                 { icon: BarChart3, title: 'Portfolio Heatmap', desc: 'See sector-wise and stock-wise attribution — know exactly which holdings are driving returns.', color: colors.accentGreen },
                 { icon: TrendingUp, title: 'NAV History Charts', desc: "Track how your fund's NAV has moved over time with interactive charts.", color: colors.accentPurple },
-                { icon: ShieldCheck, title: 'Prediction Accuracy', desc: "Every day, we show yesterday's prediction vs. actual NAV — judge our accuracy yourself.", color: '#fbbf24' },
+                { icon: ShieldCheck, title: 'Prediction Accuracy', desc: "Every day, we show yesterday's prediction vs. actual NAV — judge our accuracy yourself.", color: colors.accentYellow },
               ].map((f, i) => (
                 <View key={i} style={[styles.featureCard, isTablet && styles.featureCardTablet, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
                   <View style={[styles.iconCircle, { backgroundColor: `${f.color}22` }]}>
@@ -103,15 +103,15 @@ export default function AboutScreen() {
           <View style={[styles.trustSection, { borderColor: 'rgba(16, 185, 129, 0.15)' }]}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: spacing.sm }}>
               <View style={[styles.sectionIconWrap, { backgroundColor: 'rgba(16, 185, 129, 0.15)' }]}>
-                <Eye size={scale(24)} color="#10b981" />
+                <Eye size={scale(24)} color={colors.accentGreen} />
               </View>
-              <Text style={[styles.sectionTitle, { color: '#10b981', marginTop: 0, marginBottom: 0, fontSize: scale(fontSizes.lg) }]}>Built on Transparency</Text>
+              <Text style={[styles.sectionTitle, { color: colors.accentGreen, marginTop: 0, marginBottom: 0, fontSize: scale(fontSizes.lg) }]}>Built on Transparency</Text>
             </View>
             <Text style={[styles.sectionText, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>
               We built <Text style={{ color: colors.textPrimary, fontWeight: '600' }}>TruthLens</Text> — our transparency engine that compares yesterday's predictions against the actual official NAVs published by AMCs.
             </Text>
-            <View style={[styles.highlightBox, { borderLeftColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.06)' }]}>
-              <Target size={scale(16)} color="#10b981" />
+            <View style={[styles.highlightBox, { borderLeftColor: colors.accentGreen, backgroundColor: `${colors.accentGreen}0F` }]}>
+              <Target size={scale(16)} color={colors.accentGreen} />
               <Text style={[styles.highlightText, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>
                 Check our track record before you trust our numbers. If yesterday was 99.7% accurate, you know today's estimate is reliable.
               </Text>

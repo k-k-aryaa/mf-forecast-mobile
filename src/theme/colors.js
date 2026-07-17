@@ -17,6 +17,9 @@ export const darkColors = {
   accentGreen: '#22c55e',
   accentRed: '#ef4444',
   accentRedDim: 'rgba(239, 68, 68, 0.15)',
+  accentAmber: '#f59e0b',
+  accentYellow: '#fbbf24',
+  accentAmberDim: 'rgba(245, 158, 11, 0.15)',
   accentBlue: '#3b82f6',
 
   // Text
@@ -66,6 +69,9 @@ export const lightColors = {
   accentGreen: '#10b981',
   accentRed: '#ef4444',
   accentRedDim: '#fdecec',
+  accentAmber: '#d97706',
+  accentYellow: '#ca8a04',
+  accentAmberDim: '#fef3c7',
   accentBlue: '#3b82f6',
 
   // Text

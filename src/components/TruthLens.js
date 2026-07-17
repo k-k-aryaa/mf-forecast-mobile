@@ -36,7 +36,7 @@ export default function TruthLens({ fundId }) {
   const getMagnitudeColor = (magnitude) => {
     switch (magnitude) {
       case 'LOW': return colors.accentGreen;
-      case 'MEDIUM': return '#f59e0b';
+      case 'MEDIUM': return colors.accentAmber;
       case 'HIGH': return colors.accentRed;
       default: return colors.textMuted;
     }

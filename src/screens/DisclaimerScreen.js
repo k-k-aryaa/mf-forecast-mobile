@@ -38,9 +38,9 @@ export default function DisclaimerScreen() {
 
             {/* Experimental Banner */}
             <View style={[styles.banner, { borderColor: 'rgba(245, 158, 11, 0.2)' }]}>
-              <FlaskConical size={scale(20)} color="#f59e0b" />
+              <FlaskConical size={scale(20)} color={colors.accentAmber} />
               <Text style={[styles.bannerText, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>
-                MF Forecast is an <Text style={{ color: '#fbbf24', fontWeight: '700' }}>experimental, educational project</Text> — not a certified financial product.
+                MF Forecast is an <Text style={{ color: colors.accentYellow, fontWeight: '700' }}>experimental, educational project</Text> — not a certified financial product.
               </Text>
             </View>
 
@@ -58,7 +58,7 @@ export default function DisclaimerScreen() {
 
               <View style={[styles.card, isTablet && styles.cardTabletHalf, { backgroundColor: colors.surfaceHover, borderColor: colors.borderSubtle }]}>
                 <View style={[styles.cardIcon, { backgroundColor: 'rgba(245, 158, 11, 0.12)' }]}>
-                  <Scale size={scale(22)} color="#f59e0b" />
+                  <Scale size={scale(22)} color={colors.accentAmber} />
                 </View>
                 <Text style={[styles.cardTitle, { color: colors.textPrimary, fontSize: scale(fontSizes.base) }]}>Not Financial Advice</Text>
                 <Text style={[styles.cardText, { color: colors.textSecondary, fontSize: scale(fontSizes.sm) }]}>
